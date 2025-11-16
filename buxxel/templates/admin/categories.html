@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+{% import "macros/admin_nav.html" as admin %}
+{% block content %}
+{{ admin.admin_nav() }}
+<!-- Add Category Button -->
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+  Add Category
+</button>
+
+<section id="categories">
+  <h5>Categories</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Slug</th>
+          <th>Description</th>
+          <th>Listings</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+        <tr>
+          <td>{{ category.name }}</td>
+          <td>{{ category.slug }}</td>
+          <td>{{ category.description or '—' }}</td>
+          <td>{{ category.listing_count or 0 }}</td>
+          <td>
+            <!-- Edit Category Button -->
+            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal-{{ category.id }}">
+              Edit
+            </button>
+
+            <form method="POST" action="{{ url_for('admin_api.delete_category', category_id=category.id) }}" style="display:inline;">
+              <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this category?');">
+                Delete
+              </button>
+            </form>
+
+          </td>
+        </tr>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal-{{ category.id }}" tabindex="-1" aria-labelledby="editCategoryModalLabel-{{ category.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCategoryModalLabel-{{ category.id }}">
+          Edit Category: {{ category.name }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Form -->
+      <form method="POST" action="{{ url_for('admin_api.edit_category', category_id=category.id) }}">
+        <div class="modal-body">
+          <!-- Name -->
+          <div class="mb-3">
+            <label for="editCategoryName-{{ category.id }}" class="form-label">Name</label>
+            <input type="text" class="form-control" id="editCategoryName-{{ category.id }}" name="name" value="{{ category.name }}" required>
+          </div>
+
+          <!-- Slug -->
+          <div class="mb-3">
+            <label for="editCategorySlug-{{ category.id }}" class="form-label">Slug</label>
+            <input type="text" class="form-control" id="editCategorySlug-{{ category.id }}" name="slug" value="{{ category.slug }}" required>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="editCategoryDescription-{{ category.id }}" class="form-label">Description</label>
+            <textarea class="form-control" id="editCategoryDescription-{{ category.id }}" name="description" rows="3">{{ category.description }}</textarea>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center">No categories found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+{% endblock %}

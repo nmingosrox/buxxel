@@ -1,0 +1,240 @@
+{% extends 'layout.html' %}
+{% from "macros/product_card.html" import product_card %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container-fluid d-flex align-items-center">
+
+    <!-- Left: Hamburger + Brand -->
+    <div class="d-flex align-items-center">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu"
+        aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand fw-bold" href="/">Buxxel</a>
+    </div>
+
+    <!-- Center: Search Bar -->
+    <div class="mx-auto d-none d-lg-block" style="max-width: 400px;">
+      <div class="input-group">
+        <input type="text" class="form-control search-bar-custom" id="search-bar" placeholder="Search for listings...">
+        <button class="btn btn-warning" type="button" aria-label="Search">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Cart + Auth -->
+    <div class="d-flex align-items-center ms-auto">
+
+      <!-- Guest View -->
+      <div id="auth-guest" class="d-flex mx-3">
+        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#authModal">Sign In</button>
+      </div>
+
+      <!-- Authenticated User View -->
+      <div id="auth-user" class="d-none align-items-center">
+        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary me-3">Dashboard</a>
+        <span class="navbar-text me-3 d-none d-lg-inline" id="user-email"></span>
+        <button type="button" class="btn btn-outline-light" id="logout-btn">Logout</button>
+      </div>
+
+      <!-- Cart Icon -->
+      <a class="nav-link position-relative me-3" href="#" id="cart-icon" data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="View shopping cart">
+        <i class="bi bi-cart-fill fs-4 text-light"></i>
+        <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-warning text-dark" id="cart-count">0</span>
+      </a>
+
+
+    </div>
+  </div>
+
+  <!-- Collapsible Menu -->
+  <div class="collapse navbar-collapse" id="navbarMenu">
+    <ul class="navbar-nav me-auto">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Home</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="{{ url_for('main.index') }}">Listings (Products and Services)</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="#">Purveyors</a>
+      </li>
+      <hr class="border-warning">
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="#">Become a purveyor</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="#">About buxxel</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">Admin</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Second Row: Search Bar -->
+<div class="bg-dark py-2">
+  <div class="container">
+    <div class="input-group" style="max-width: 600px; margin: 0 auto;">
+      <input type="text" class="form-control search-bar-custom" id="search-bar" placeholder="Search for listings...">
+      <button class="btn btn-warning" type="button" aria-label="Search">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Row 3: Horizontal Scrollable Navigation -->
+<div class="bg-secondary">
+  <div class="container-fluid px-0">
+    <div class="overflow-auto">
+      <ul class="nav flex-nowrap justify-content-start py-2 px-3" style="white-space: nowrap;">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">All Listings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Purveyors</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Games</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Art Supplies</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Toys</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Stationery</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Collectibles</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Books</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">Accessories</a>
+        </li>
+        <!-- Add more items as needed -->
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Row 4: Geolocation Display -->
+<div class="bg-dark text-light py-2">
+  <div class="container text-center">
+    <a href="/change-location" class="text-decoration-none text-light d-inline-flex align-items-center gap-2">
+      <span id="location-display" class="d-none"></span>
+      <i class="bi bi-chevron-down"></i>
+    </a>
+  </div>
+</div>
+
+<div class="container-fluid bg-light py-4">
+  <div class="d-flex overflow-auto px-3" style="scroll-snap-type: x mandatory; gap: 1.5rem;">
+
+    <!-- Card 1 -->
+    <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;">
+      <div class="position-relative">
+        <img src="../static/phone1.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image">
+        <span class="position-absolute display-3 top-0 start-0 text-white-50 bg-dark bg-opacity-25">Phones</span>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;">
+      <div class="position-relative">
+        <img src="../static/kitchen.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image">
+        <span class="position-absolute display-3 top-0 start-0 text-light bg-dark bg-opacity-25">Kitchen<br>must-haves</span>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;">
+      <div class="position-relative">
+        <img src="../static/clothing.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image">
+        <span class="position-absolute display-3 top-0 start-0 text-black bg-light bg-opacity-25">Start looking<br>sharp</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Dynamic Category Grid Section -->
+<div class="container py-4">
+  <div class="row g-4">
+    {% for category_id, category_data in categories_with_listings.items() %}
+      {# Only display a card if the category has at least one listing with an image #}
+      {% if category_data.listings %}
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+              <h4 class="card-title">{{ category_data.name }}</h4>
+              <!-- 2x2 Image Grid -->
+              <div class="container px-0 pt-2">
+                <div class="row g-2">
+                  {% for listing in category_data.listings %}
+                  <div class="col-6">
+                    <a href="{{ url_for('listings_api.handle_listing', listing_id=listing.id) }}" class="text-decoration-none">
+                      {% if listing.image_urls and listing.image_urls|length > 0 %}
+                        <img src="{{ listing.image_urls[0] }}" class="img-fluid rounded" alt="{{ listing.name }}" style="height: 100px; width: 100%; object-fit: cover;">
+                      {% else %}
+                        <img src="{{ url_for('static', filename='placeholder.png') }}" class="img-fluid rounded" alt="No image" style="height: 100px; width: 100%; object-fit: cover;">
+                      {% endif %}
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="mt-auto pt-3">
+                <a href="{{ url_for('main.index') }}?category={{ category_data.slug }}" class="card-link">See more in {{ category_data.name }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- CTA Section -->
+<section id="cta-section" class="text-center bg-light d-block">
+  <h4 class="card-title">Sign in for the best experience</h4>
+  <a href="#" id="cta" class="btn btn-warning rounded-pill w-90 mx-auto">Sign in securely</a><br>
+  <a href="#" class="d-block text-decoration-none"><small>create an account</small></a>
+</section>
+
+
+<main class="container">
+    <!-- Listings Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="listing-grid">
+        {% for listing in listings %}
+            {{ product_card(listing) }}
+        {% endfor %}
+    </div>
+    {% if error %}
+        <div class="text-center p-5">
+            <h4 class="text-danger">{{ error }}</h4>
+        </div>
+    {% endif %}
+
+    <!-- Pagination Controls -->
+    <div id="load-more-container" class="text-center mt-5">
+        {% if has_next %}
+            <button id="load-more-btn" class="btn btn-primary btn-lg" data-next-page="2">Load More Listings</button>
+        {% endif %}
+    </div>
+
+    
+</main>
+
+<footer class="bg-dark text-white text-center p-3 mt-5">
+    <p>&copy; 2024 Buxxel. All Rights Reserved.</p>
+</footer>
+{% endblock %}

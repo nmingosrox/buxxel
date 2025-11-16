@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% import "macros/admin_nav.html" as admin %}
+{% block content %}
+{{ admin.admin_nav() }}
+<style>
+  body {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  .sidebar {
+    background-color: #343a40;
+    color: white;
+  }
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+  }
+  .sidebar a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 768px) {
+    .sidebar {
+      height: auto;
+    }
+  }
+</style>
+
+<div class="container-fluid">
+  <div class="row flex-column flex-md-row">
+    <!-- Sidebar -->
+    <nav class="col-12 col-md-2 sidebar d-flex flex-md-column flex-row justify-content-between p-3">
+      <h4 class="mb-3 d-none d-md-block">Admin Panel</h4>
+      <div class="d-flex flex-md-column flex-row gap-3">
+        <a href="{{ url_for('admin.admin_purveyors') }}">Purveyors</a>
+        <a href="{{ url_for('admin.admin_listings') }}">Listings</a>
+        <a href="{{ url_for('admin.admin_categories') }}">Categories</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-12 col-md-10 p-3">
+      <!-- Top Navbar -->
+      <nav class="navbar navbar-light bg-light mb-4">
+        <span class="navbar-brand mb-0 h5">Welcome, Admin</span>
+      </nav>
+
+
+
+     
+    </main>
+  </div>
+</div>
+{% endblock %}

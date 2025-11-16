@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% import "macros/admin_nav.html" as admin %}
+
+{% block content %}
+{{ admin.admin_nav() }}
+
+<div class="container">
+  <h2 class="mb-4">Purveyor Profile</h2>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4 class="card-title">{{ purveyor.name }}</h4>
+      <p><strong>Email:</strong> {{ purveyor.email }}</p>
+      <p><strong>Phone:</strong> {{ purveyor.phone }}</p>
+      <p><strong>Website:</strong> <a href="{{ purveyor.website }}" target="_blank">{{ purveyor.website }}</a></p>
+      <p><strong>Country:</strong> {{ purveyor.country }}</p>
+      <p><strong>City:</strong> {{ purveyor.city }}</p>
+      <p><strong>Address:</strong> {{ purveyor.address }}</p>
+      <p><strong>Type:</strong> {{ purveyor.type }}</p>
+      <p><strong>Verified:</strong> {{ 'Yes' if purveyor.is_verified else 'No' }}</p>
+      <p><strong>Description:</strong> {{ purveyor.description or '—' }}</p>
+      <p><strong>Tags:</strong>
+        {% for tag in purveyor.tags %}
+          <span class="badge bg-info me-1">{{ tag }}</span>
+        {% endfor %}
+      </p>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.purveyor_listings', purveyor_id=purveyor.id) }}" 
+       class="btn btn-outline-primary">
+      View Listings
+    </a>
+    <!-- Add Listing Button -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newListingModal">
+      <i class="bi bi-plus-circle"></i> Add New Listing
+    </button>
+
+    <form method="POST" action="/api/purveyors/{{ purveyor.id }}/delete" onsubmit="return confirm('Are you sure you want to delete this purveyor? This action cannot be undone.')">
+      <button type="submit" class="btn btn-danger">Delete Purveyor</button>
+    </form>
+  </div>
+    
+
+<!-- New Listing Modal -->
+<div class="modal fade" id="newListingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newListingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="newListingModalLabel">Create a New Listing</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form id="newListingForm" method="POST" action="{{ url_for('admin_api.create_listing', purveyor_id=purveyor.id) }}" enctype="multipart/form-data">
+          
+          <!-- Listing Name -->
+          <div class="mb-3">
+            <label for="newListingName" class="form-label">Listing Name</label>
+            <input type="text" class="form-control" id="newListingName" name="name" required>
+          </div>
+
+          <!-- Listing Category -->
+          <div class="mb-3">
+            <label for="newListingCategory" class="form-label">Listing Category</label>
+            <input class="form-control" list="categoriesList" id="newListingCategory" name="category_id" required>
+            <datalist id="categoriesList">
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </datalist>
+            <div class="form-text">Start typing to search, or select from the dropdown.</div>
+          </div>
+
+
+          <!-- Price -->
+          <div class="mb-3">
+            <label for="newListingPrice" class="form-label">Price ($)</label>
+            <input type="number" class="form-control" id="newListingPrice" name="price" step="0.01" min="0" required>
+          </div>
+
+          <!-- Stock -->
+          <div class="mb-3" id="stockField">
+            <label for="newListingStock" class="form-label">Available Stock (Quantity)</label>
+            <input type="number" class="form-control" id="newListingStock" name="stock" min="0" value="1">
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="newListingDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="newListingDescription" name="description" rows="4" required></textarea>
+          </div>
+
+          <!-- Product Image -->
+          <div class="mb-3">
+            <label class="form-label">Product Image</label>
+            <!-- Uploadcare widget -->
+            <input type="hidden" role="uploadcare-uploader" name="image_url" 
+                   data-images-only="true" 
+                   data-crop="free" 
+                   data-image-shrink="1920x1920 80%" 
+                   id="new-uploadcare-widget" />
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary w-100">Post Listing</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const productRadio = document.getElementById("categoryProduct");
+  const serviceRadio = document.getElementById("categoryService");
+  const stockField = document.getElementById("stockField");
+
+  function toggleStock() {
+    if (serviceRadio.checked) {
+      stockField.style.display = "none";
+      document.getElementById("newListingStock").removeAttribute("required");
+    } else {
+      stockField.style.display = "block";
+      document.getElementById("newListingStock").setAttribute("required", "true");
+    }
+  }
+
+  productRadio.addEventListener("change", toggleStock);
+  serviceRadio.addEventListener("change", toggleStock);
+
+  // Initialize on page load
+  toggleStock();
+});
+</script>
+
+{% endblock %}

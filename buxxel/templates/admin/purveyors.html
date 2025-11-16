@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% import "macros/admin_nav.html" as admin %}
+{% block content %}
+{{ admin.admin_nav() }}
+      <!-- Purveyors Section -->
+      <section id="purveyors" class="mb-5">
+  <h5>Purveyors</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Country</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for purveyor in purveyors %}
+        <tr>
+          <td>{{ purveyor.name }}</td>
+          <td>{{ purveyor.email }}</td>
+          <td>{{ purveyor.phone or '—' }}</td>
+          <td>{{ purveyor.country or '—' }}</td>
+          <td>{{ purveyor.type or '—' }}</td>
+          <td>
+            <!-- <button class="btn btn-sm btn-warning">Disable</button> -->
+            <a href="{{ url_for('admin.view_purveyor', purveyor_id=purveyor.id) }}" class="btn btn-sm btn-info">View</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
