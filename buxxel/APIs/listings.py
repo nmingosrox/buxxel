@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, render_template
 from buxxel.extensions import supabase
 from buxxel.auth.decorators import auth_required
 
@@ -77,6 +77,34 @@ def get_user_listings(user):
         return jsonify({"listings": response.data, "pagination": {"page": page, "has_next": has_next, "total_listings": response.count}}), 200
     except Exception as e:
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+@listings_api_bp.route('/listings/by-category/<string:category_name>', methods=['GET'])
+def get_listings_by_category(category_name):
+    """
+    Fetches listings filtered by a given category name for the authenticated user.
+    Assumes 'listings' table has a 'category_id' column referencing 'categories.id'.
+    """
+    try:
+        # 1. Find the category ID from the 'categories' table
+        category_response = supabase.table('categories').select('id').eq('name', category_name).single().execute()
+        if not category_response.data:
+            return jsonify({"error": f"Category '{category_name}' not found."}), 404
+
+        category_id = category_response.data['id']
+
+        # 2. Fetch listings filtered by category_id
+        listings_response = supabase.table('listings').select("*").eq('category_id', category_id).execute()
+        if not listings_response.data:
+            return jsonify({"message": f"No listings found for category '{category_name}' for this user."}), 200
+
+        # Render template with listings and category name
+        return render_template(
+            'category_listings.html',
+            listings=listings_response.data,
+            category_name=category_name
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @listings_api_bp.route('/listings/<listing_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required

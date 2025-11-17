@@ -135,35 +135,35 @@
   </div>
 </div>
 
-<div class="container-fluid bg-light py-4">
-  <div class="d-flex overflow-auto px-3" style="scroll-snap-type: x mandatory; gap: 1.5rem;">
-
+<!-- <div class="container-fluid bg-light py-4"> -->
+  <!-- <div class="d-flex overflow-auto px-3" style="scroll-snap-type: x mandatory; gap: 1.5rem;"> -->
+<!--  -->
     <!-- Card 1 -->
-    <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;">
-      <div class="position-relative">
-        <img src="../static/phone1.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image">
-        <span class="position-absolute display-3 top-0 start-0 text-white-50 bg-dark bg-opacity-25">Phones</span>
-      </div>
-    </div>
-
+    <!-- <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;"> -->
+      <!-- <div class="position-relative"> -->
+        <!-- <img src="../static/phone1.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image"> -->
+        <!-- <span class="position-absolute display-3 top-0 start-0 text-white-50 bg-dark bg-opacity-25">Phones</span> -->
+      <!-- </div> -->
+    <!-- </div> -->
+<!--  -->
     <!-- Card 2 -->
-    <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;">
-      <div class="position-relative">
-        <img src="../static/kitchen.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image">
-        <span class="position-absolute display-3 top-0 start-0 text-light bg-dark bg-opacity-25">Kitchen<br>must-haves</span>
-      </div>
-    </div>
-
+    <!-- <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;"> -->
+      <!-- <div class="position-relative"> -->
+        <!-- <img src="../static/kitchen.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image"> -->
+        <!-- <span class="position-absolute display-3 top-0 start-0 text-light bg-dark bg-opacity-25">Kitchen<br>must-haves</span> -->
+      <!-- </div> -->
+    <!-- </div> -->
+<!--  -->
     <!-- Card 3 -->
-    <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;">
-      <div class="position-relative">
-        <img src="../static/clothing.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image">
-        <span class="position-absolute display-3 top-0 start-0 text-black bg-light bg-opacity-25">Start looking<br>sharp</span>
-      </div>
-    </div>
-
-  </div>
-</div>
+    <!-- <div class="card border-0 shadow-sm flex-shrink-0" style="width: 100%; max-width: 300px; scroll-snap-align: center;"> -->
+      <!-- <div class="position-relative"> -->
+        <!-- <img src="../static/clothing.jpg" class="card-img-top" style="height: 500px; object-fit: cover;" alt="Product Image"> -->
+        <!-- <span class="position-absolute display-3 top-0 start-0 text-black bg-light bg-opacity-25">Start looking<br>sharp</span> -->
+      <!-- </div> -->
+    <!-- </div> -->
+<!--  -->
+  <!-- </div> -->
+<!-- </div> -->
 
 <!-- Dynamic Category Grid Section -->
 <div class="container py-4">
@@ -180,7 +180,8 @@
                 <div class="row g-2">
                   {% for listing in category_data.listings %}
                   <div class="col-6">
-                    <a href="{{ url_for('listings_api.handle_listing', listing_id=listing.id) }}" class="text-decoration-none">
+                    <!-- Use category_data.name instead of listing.category -->
+                    <a href="{{ url_for('listings_api.get_listings_by_category', category_name=category_data.name) }}" class="text-decoration-none">
                       {% if listing.image_urls and listing.image_urls|length > 0 %}
                         <img src="{{ listing.image_urls[0] }}" class="img-fluid rounded" alt="{{ listing.name }}" style="height: 100px; width: 100%; object-fit: cover;">
                       {% else %}
@@ -192,7 +193,10 @@
                 </div>
               </div>
               <div class="mt-auto pt-3">
-                <a href="{{ url_for('main.index') }}?category={{ category_data.slug }}" class="card-link">See more in {{ category_data.name }}</a>
+                <!-- Again, use category_data.name -->
+                <a href="{{ url_for('listings_api.get_listings_by_category', category_name=category_data.name) }}" class="card-link">
+                  See more in {{ category_data.name }}
+                </a>
               </div>
             </div>
           </div>
@@ -201,6 +205,7 @@
     {% endfor %}
   </div>
 </div>
+
 
 
 <!-- CTA Section -->
