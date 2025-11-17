@@ -146,28 +146,74 @@
   </div>
 </div>
 
-    <!-- Cart Modal -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLabel">Shopping Cart</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="cart-items-container">
-                        <!-- Cart items will be injected here by JavaScript -->
-                        <p>Your cart is empty.</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <span class="me-auto"><strong>Total: $<span id="cart-total">0.00</span></strong></span>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Checkout</button>
-                </div>
-            </div>
+<!-- Cart Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cartModalLabel">Shopping Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="cart-items-container">
+          <!-- Cart items will be injected here by JavaScript -->
+          <p>Your cart is empty.</p>
         </div>
+      </div>
+      <div class="modal-footer">
+        <span class="me-auto"><strong>Total: $<span id="cart-total">0.00</span></strong></span>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        
+      <!-- Checkout button now redirects to checkout page with cart data -->
+      <form id="checkoutForm" method="GET" action="{{ url_for('main.checkout') }}">
+        <input type="hidden" name="order_items" id="order-items-input">
+        <input type="hidden" name="total_price" id="total-price-input">
+        <button type="submit" class="btn btn-primary">Checkout</button>
+      </form>
+
+      </div>
     </div>
+  </div>
+</div>
+
+<script>
+  // Example cart array (replace with your actual cart logic)
+  let cart = [];
+
+  function updateCartModal() {
+    const container = document.getElementById("cart-items-container");
+    const totalSpan = document.getElementById("cart-total");
+    const orderItemsInput = document.getElementById("order-items-input");
+    const totalPriceInput = document.getElementById("total-price-input");
+
+    if (cart.length === 0) {
+      container.innerHTML = "<p>Your cart is empty.</p>";
+      totalSpan.textContent = "0.00";
+      orderItemsInput.value = "[]";
+      totalPriceInput.value = "0.00";
+      return;
+    }
+
+    let html = "<ul class='list-group'>";
+    let total = 0;
+    cart.forEach(item => {
+      html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                ${item.name}
+                <span>$${item.price.toFixed(2)}</span>
+              </li>`;
+      total += item.price;
+    });
+    html += "</ul>";
+
+    container.innerHTML = html;
+    totalSpan.textContent = total.toFixed(2);
+
+    // Pass cart data to hidden inputs for checkout form
+    orderItemsInput.value = JSON.stringify(cart);
+    totalPriceInput.value = total.toFixed(2);
+  }
+</script>
+
 
     <!-- Purveyor Profile Modal -->
     <div class="modal fade" id="purveyorProfileModal" tabindex="-1" aria-labelledby="purveyorProfileModalLabel" aria-hidden="true">

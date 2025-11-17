@@ -81,7 +81,7 @@ def get_user_listings(user):
 @listings_api_bp.route('/listings/by-category/<string:category_name>', methods=['GET'])
 def get_listings_by_category(category_name):
     """
-    Fetches listings filtered by a given category name for the authenticated user.
+    Fetches listings filtered by a given category name.
     Assumes 'listings' table has a 'category_id' column referencing 'categories.id'.
     """
     try:

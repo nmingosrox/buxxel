@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <h2 class="mb-4 text-success">🎉 Thank You for Your Order!</h2>
+    <p class="lead">We’ve received your checkout details. Our team will contact you soon for delivery and payment arrangements.</p>
+
+    <!-- Order Summary -->
+    <div class="mt-5">
+        <h4>Your Order Summary</h4>
+        {% if order_items %}
+  <ul class="list-group">
+    {% for id, item in order_items.items() %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ item.name }}</strong>
+          <small class="text-muted">x{{ item.quantity }}</small>
+        </div>
+        <span>${{ "%.2f"|format(item.price * item.quantity) }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+    </div>
+
+    <!-- Next Steps -->
+    <div class="mt-4">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to Home</a>
+    </div>
+</div>
+{% endblock %}

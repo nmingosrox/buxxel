@@ -103,6 +103,76 @@ $(document).ready(function() {
         }
     });
 
+
+    // --- CHECKOUT PAGE ---
+document.addEventListener("DOMContentLoaded", () => {
+  // Load cart from localStorage
+  let cart = JSON.parse(localStorage.getItem("buxxelCart")) || {};
+  const container = document.getElementById("checkout-cart-container");
+  const totalSpan = document.getElementById("checkout-total");
+
+  function renderCart() {
+    if (Object.keys(cart).length === 0) {
+      container.innerHTML = "<p>Your cart is empty.</p>";
+      totalSpan.textContent = "0.00";
+      return;
+    }
+
+    let html = "<ul class='list-group'>";
+    let total = 0;
+
+    for (const id in cart) {
+      const item = cart[id];
+      total += item.price * item.quantity;
+      html += `
+        <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}">
+          <div>
+            <h6 class="my-0">${item.name}</h6>
+            <small class="text-muted">Price: $${item.price.toFixed(2)}</small>
+          </div>
+          <div class="d-flex align-items-center">
+            <button class="btn btn-sm btn-outline-secondary decrease-qty" data-id="${id}">-</button>
+            <span class="mx-2">${item.quantity}</span>
+            <button class="btn btn-sm btn-outline-secondary increase-qty" data-id="${id}">+</button>
+            <button class="btn btn-sm btn-danger ms-3 remove-item" data-id="${id}">&times;</button>
+          </div>
+        </li>`;
+    }
+
+    html += "</ul>";
+    container.innerHTML = html;
+    totalSpan.textContent = total.toFixed(2);
+  }
+
+  // Initial render
+  renderCart();
+
+  // Event delegation for cart actions
+  container.addEventListener("click", (e) => {
+    const id = e.target.dataset.id;
+    if (!id) return;
+
+    if (e.target.classList.contains("increase-qty")) {
+      cart[id].quantity++;
+    } else if (e.target.classList.contains("decrease-qty")) {
+      cart[id].quantity--;
+      if (cart[id].quantity <= 0) delete cart[id];
+    } else if (e.target.classList.contains("remove-item")) {
+      delete cart[id];
+    }
+
+    localStorage.setItem("buxxelCart", JSON.stringify(cart));
+    renderCart();
+  });
+
+  // Before submitting checkout form, attach latest cart data
+  const checkoutForm = document.querySelector("form");
+  checkoutForm.addEventListener("submit", () => {
+    const total = Object.values(cart).reduce((sum, item) => sum + item.price * item.quantity, 0);
+    checkoutForm.querySelector("[name='order_items']").value = JSON.stringify(cart);
+    checkoutForm.querySelector("[name='total_price']").value = total.toFixed(2);
+  });
+});
     // --- PURVEYOR PROFILE MODAL ---
     let purveyorButton = null;
     let originalButtonHtml = '';

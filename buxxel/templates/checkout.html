@@ -1,0 +1,143 @@
+{% extends 'layout.html' %}
+{% from "macros/product_card.html" import product_card %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Checkout Form</h2>
+
+    <!-- Cart Summary -->
+    <div class="mb-4">
+      <h4>Your Cart</h4>
+      <div id="checkout-cart-container"></div>
+      <div class="mt-2"><strong>Total: $<span id="checkout-total">0.00</span></strong></div>
+    </div>
+
+    <!-- Checkout Form -->
+    <form id="checkoutForm" method="POST" action="{{ url_for('main.checkout') }}">
+      <!-- Hidden inputs populated by JS before submit -->
+      <input type="hidden" name="order_items" id="order-items-input">
+      <input type="hidden" name="total_price" id="total-price-input">
+
+      <!-- Contact Information -->
+      <div class="mb-3">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="fullName" name="fullName" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="phone" name="phone" required>
+      </div>
+
+      <!-- Delivery Information -->
+      <div class="mb-3">
+        <label for="address" class="form-label">Delivery Address</label>
+        <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" name="city" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="postalCode" class="form-label">Postal Code</label>
+        <input type="text" class="form-control" id="postalCode" name="postalCode" required>
+      </div>
+
+      <!-- Payment Communication Preferences -->
+      <div class="mb-3">
+        <label for="preferredContact" class="form-label">Preferred Contact Method</label>
+        <select class="form-select" id="preferredContact" name="preferredContact" required>
+          <option value="email">Email</option>
+          <option value="phone">Phone</option>
+          <option value="whatsapp">WhatsApp</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="notes" class="form-label">Additional Notes (optional)</label>
+        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary">Submit Checkout</button>
+    </form>
+</div>
+
+<!-- Inline JS to reuse cart logic from app.js -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let cart = JSON.parse(localStorage.getItem("buxxelCart")) || {};
+  const container = document.getElementById("checkout-cart-container");
+  const totalSpan = document.getElementById("checkout-total");
+
+  function renderCart() {
+    if (Object.keys(cart).length === 0) {
+      container.innerHTML = "<p>Your cart is empty.</p>";
+      totalSpan.textContent = "0.00";
+      return;
+    }
+
+    let html = "<ul class='list-group'>";
+    let total = 0;
+
+    for (const id in cart) {
+      const item = cart[id];
+      total += item.price * item.quantity;
+      html += `
+        <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}">
+          <div>
+            <h6 class="my-0">${item.name}</h6>
+            <small class="text-muted">Price: $${item.price.toFixed(2)}</small>
+          </div>
+          <div class="d-flex align-items-center">
+            <button class="btn btn-sm btn-outline-secondary decrease-qty" data-id="${id}">-</button>
+            <span class="mx-2">${item.quantity}</span>
+            <button class="btn btn-sm btn-outline-secondary increase-qty" data-id="${id}">+</button>
+            <button class="btn btn-sm btn-danger ms-3 remove-item" data-id="${id}">&times;</button>
+          </div>
+        </li>`;
+    }
+
+    html += "</ul>";
+    container.innerHTML = html;
+    totalSpan.textContent = total.toFixed(2);
+  }
+
+  // Initial render
+  renderCart();
+
+  // Event delegation for cart actions
+  container.addEventListener("click", (e) => {
+    const id = e.target.dataset.id;
+    if (!id) return;
+
+    if (e.target.classList.contains("increase-qty")) {
+      cart[id].quantity++;
+    } else if (e.target.classList.contains("decrease-qty")) {
+      cart[id].quantity--;
+      if (cart[id].quantity <= 0) delete cart[id];
+    } else if (e.target.classList.contains("remove-item")) {
+      delete cart[id];
+    }
+
+    localStorage.setItem("buxxelCart", JSON.stringify(cart));
+    renderCart();
+  });
+
+  // Before submitting checkout form, attach latest cart data
+  const checkoutForm = document.getElementById("checkoutForm");
+  checkoutForm.addEventListener("submit", () => {
+    const total = Object.values(cart).reduce((sum, item) => sum + item.price * item.quantity, 0);
+    document.getElementById("order-items-input").value = JSON.stringify(cart);
+    document.getElementById("total-price-input").value = total.toFixed(2);
+  });
+});
+</script>
+{% endblock %}
