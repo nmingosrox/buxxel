@@ -3,6 +3,114 @@ from buxxel.extensions import supabase
 from buxxel.auth.decorators import auth_required
 
 listings_api_bp = Blueprint('listings_api', __name__, url_prefix='/api')
+# Adds new listing to listings table in supabase
+@listings_api_bp.route('/listings/add', methods=['POST'])
+@auth_required
+def add_listing(user):
+    """
+    Adds a new listing for the authenticated user.
+    Expects form data: name, price, description, stock, image_url, tags.
+    """
+    try:
+        data = request.form
+
+        # Validate required fields
+        required_fields = ['name', 'price', 'description', 'stock', 'image_url']
+        if not all(data.get(field) for field in required_fields):
+            return jsonify({"error": "Missing required listing data."}), 400
+
+        # Parse and validate numeric fields
+        try:
+            price = float(data.get('price'))
+            stock = int(data.get('stock'))
+        except ValueError:
+            return jsonify({"error": "Price and stock must be valid numbers."}), 400
+
+        # Apply commission rate
+        final_price = price * (1 + current_app.config['COMMISSION_RATE'])
+
+        # Process tags
+        tags = [tag.strip().lower() for tag in data.get('tags', '').split(',') if tag.strip()]
+
+        # Build listing payload
+        listing_data = {
+            "name": data.get('name'),
+            "price": final_price,
+            "description": data.get('description'),
+            "stock": stock,
+            "pre_zero_stock": stock if stock > 0 else 1,
+            "image_urls": [data.get('image_url')],
+            "tags": tags,
+            "category": tags[0] if tags else 'general',
+            "user_id": user.id
+        }
+
+        # Insert into Supabase
+        response = supabase.table('listings').insert(listing_data).execute()
+
+        return jsonify(response.data[0]), 201
+
+    except Exception as e:
+        current_app.logger.error(f"Error adding listing: {e}", exc_info=True)
+        return jsonify({"error": "An unexpected error occurred while adding listing."}), 500
+
+# Edits an existing listing in supabase
+@admin_api_bp.route('purveyor/<purveyor_id>/listings/<listing_id>/edit', methods=['POST'])
+def edit_listing(purveyor_id, listing_id):
+    try:
+        data = request.form
+
+        # Validate required fields
+        if not all([data.get('name'), data.get('price'), data.get('description'), data.get('category_id')]):
+            return jsonify({"error": "Missing required listing data."}), 400
+
+        price = float(data.get('price'))
+        final_price = price * (1 + current_app.config['COMMISSION_RATE'])
+        stock = int(data.get('stock')) if data.get('stock') else 0
+
+        update_data = {
+            "name": data.get('name'),
+            "price": final_price,
+            "description": data.get('description'),
+            "category_id": data.get('category_id'),
+            "stock": stock,
+        }
+
+        # Optional image update
+        if data.get('image_url'):
+            update_data["image_urls"] = [data.get('image_url')]
+
+        response = supabase.table("listings").update(update_data).eq("id", listing_id).eq("purveyor_id", purveyor_id).execute()
+
+        if response.data:
+            return jsonify(response.data[0]), 200
+        else:
+            return jsonify({"error": "Listing not found or update failed."}), 404
+
+    except (ValueError, TypeError):
+        return jsonify({"error": "Price and stock must be valid numbers."}), 400
+    except Exception as e:
+        current_app.logger.error(f"Listing edit error: {e}", exc_info=True)
+        return jsonify({"error": "An unexpected error occurred during listing update."}), 500
+
+@admin_api_bp.route('/purveyor/<purveyor_id>/listings/<listing_id>/delete', methods=['POST'])
+def delete_listing(purveyor_id, listing_id):
+    try:
+        # Attempt to delete the listing for this purveyor
+        response = supabase.table("listings") \
+            .delete() \
+            .eq("id", listing_id) \
+            .eq("purveyor_id", purveyor_id) \
+            .execute()
+
+        if response.data:
+            return jsonify({"message": "Listing deleted successfully."}), 200
+        else:
+            return jsonify({"error": "Listing not found or already deleted."}), 404
+
+    except Exception as e:
+        current_app.logger.error(f"Listing delete error: {e}", exc_info=True)
+        return jsonify({"error": "An unexpected error occurred during listing deletion."}), 500
 
 @listings_api_bp.route('/listings/paged', methods=['GET'])
 def get_paged_listings():
