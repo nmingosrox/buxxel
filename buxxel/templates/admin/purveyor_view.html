@@ -64,20 +64,17 @@
             <input type="text" class="form-control" id="newListingName" name="name" required>
           </div>
 
-          from supabase import create_client, Client
+  <!-- Listing Category -->
+<div class="mb-3">
+  <label for="newListingCategory" class="form-label">Listing Category</label>
+  <select class="form-select" id="newListingCategory" name="category_id" required>
+    {% for category in categories %}
+      <option value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+  </select>
+  <div class="form-text">Choose a category from the list.</div>
+</div>
 
-url = "https://<your-project-ref>.supabase.co"
-key = "<your-supabase-service-role-or-anon-key>"
-supabase: Client = create_client(url, key)
-
-@app.route("/admin/purveyors/<purveyor_id>")
-def purveyor_view(purveyor_id):
-    # fetch categories from Supabase
-    categories = supabase.table("categories").select("id,name").execute().data
-    purveyor = get_purveyor(purveyor_id)  # however you fetch purveyor
-    return render_template("admin/purveyor_view.html",
-                           purveyor=purveyor,
-                           categories=categories)
 
 
 
