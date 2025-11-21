@@ -54,7 +54,7 @@
 
       <!-- Modal Body -->
       <div class="modal-body">
-        <form id="newListingForm" method="POST" action="{{ url_for('admin_api.create_listing', purveyor_id=purveyor.id) }}" enctype="multipart/form-data">
+        <form id="newListingForm" method="POST" action="{{ url_for('listings_api.create_listing', purveyor_id=purveyor.id) }}" enctype="multipart/form-data">
           
           <!-- Listing Name -->
           <div class="mb-3">
