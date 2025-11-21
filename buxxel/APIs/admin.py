@@ -42,7 +42,7 @@ def delete_purveyor_api(purveyor_id):
     else:
         return jsonify({"error": "Failed to delete purveyor."}), 400
 
-from flask import request, jsonify
+
 
 @admin_api_bp.route('/purveyors/<purveyor_id>/edit', methods=['POST'])
 def edit_purveyor_api(purveyor_id):
@@ -85,41 +85,46 @@ def edit_purveyor_api(purveyor_id):
     else:
         return jsonify({"error": "Failed to update purveyor."}), 400
 
-# Adds new listing to listings table in supabase
 @admin_api_bp.route('/purveyor/<purveyor_id>/listings/add_listing', methods=['POST'])
 def create_listing(purveyor_id):
     try:
-        data = request.form
+        data = request.form.to_dict()  # convert to dict for easier debugging
+        current_app.logger.debug(f"Form data received: {data}")
 
-        # Required fields
-        if not all([data.get('name'), data.get('price'), data.get('description'), data.get('image_url'), data.get('category_id')]):
-            return jsonify({"error": "Missing required listing data."}), 400
+        required_fields = ['name', 'price', 'description', 'image_url', 'category_id']
+        missing = [field for field in required_fields if not data.get(field)]
+        if missing:
+            return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
 
-        price = float(data.get('price'))
+        # Validate numeric fields
+        try:
+            price = float(data['price'])
+        except ValueError:
+            return jsonify({"error": "Price must be a valid number."}), 400
+
         final_price = price * (1 + current_app.config['COMMISSION_RATE'])
-
-        # Stock only applies if category is a product-type category
-        stock = int(data.get('stock')) if data.get('stock') else 0
+        stock = int(data.get('stock', 0)) if data.get('stock') else 0
 
         tags = [tag.strip().lower() for tag in data.get('tags', '').split(',') if tag.strip()]
 
         listing_data = {
-            "name": data.get('name'),
+            "name": data['name'],
             "price": final_price,
-            "image_urls": [data.get('image_url')],
-            "category_id": data.get('category_id'),   # ✅ use category_id instead of category name
-            "description": data.get('description'),
-            "stock": stock,            "purveyor_id": purveyor_id
+            "image_urls": [data['image_url']],
+            "category_id": data['category_id'],
+            "description": data['description'],
+            "stock": stock,
+            "purveyor_id": purveyor_id,
+            "tags": tags
         }
 
         response = supabase.table('listings').insert(listing_data).execute()
-        return jsonify(response.data[0]), 201
+        return jsonify(response.data), 201
 
-    except (ValueError, TypeError):
-        return jsonify({"error": "Price and stock must be valid numbers."}), 400
     except Exception as e:
         current_app.logger.error(f"Listing creation error: {e}", exc_info=True)
         return jsonify({"error": "An unexpected error occurred during listing creation."}), 500
+
 
 # Edits an existing listing in supabase
 @admin_api_bp.route('purveyor/<purveyor_id>/listings/<listing_id>/edit', methods=['POST'])

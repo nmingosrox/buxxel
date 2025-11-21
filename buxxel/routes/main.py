@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for
 from buxxel.extensions import supabase
 from collections import defaultdict
-import datetime, json, os
+import datetime, json, os, smtplib
+from flask import request, render_template
 from twilio.rest import Client
+from email.mime.text import MIMEText
 
 main_bp = Blueprint('main', __name__)
 
@@ -53,6 +55,10 @@ def index():
         print("   Please check your .env file and Supabase table permissions.")
         return render_template('index.html', listings=[], has_next=False, categories_with_listings={}, error="Could not connect to the database.")
     
+import datetime, json, os, smtplib
+from flask import request, render_template, redirect, url_for
+from email.mime.text import MIMEText
+
 @main_bp.route('/checkout/', methods=['GET', 'POST'])
 def checkout():
     if request.method == 'POST':
@@ -65,12 +71,10 @@ def checkout():
         postal_code = request.form['postalCode']
         preferred_contact = request.form['preferredContact']
         notes = request.form.get('notes')
-
-        # Cart/session data
         order_items = request.form.get('order_items')  # JSON string
         total_price = float(request.form.get('total_price', 0.0))
 
-        # Insert into Supabase
+        # After inserting the order
         response = supabase.table('orders').insert({
             "customer_name": customer_name,
             "customer_email": email,
@@ -85,80 +89,75 @@ def checkout():
             "created_at": datetime.datetime.now().isoformat()
         }).execute()
 
-        return render_template( 'checkout_success.html',
-                               order_items=json.loads(order_items),
-                               total_price=total_price
-)
+        print(response)
 
-        # return redirect(url_for('main.checkout_success'))
-    else:
-        # Handle GET: show checkout page with cart summary
-        order_items = request.args.get('order_items')
-        total_price = request.args.get('total_price')
-        return render_template('checkout.html',
-                               order_items=order_items,
-                               total_price=total_price)
-    return render_template('checkout.html')
+        # Instead of relying on response.data[0]['id'], query the table for the latest order
+        # latest = supabase.table('orders').select("id").order("created_at", desc=True).limit(1).execute()
+
+        # order_id = latest.data[0]['id'] if latest.data else None
+
+        # if order_id:        
+        return redirect(url_for('main.checkout_success', order_id=order_id))
+        # else:
+            # return "Order creation failed", 400
+
+
+    # GET: show checkout page
+    order_items = request.args.get('order_items')
+    total_price = request.args.get('total_price')
+    return render_template('checkout.html',
+                           order_items=order_items,
+                           total_price=total_price)
+
 
 @main_bp.route('/checkout/success')
 def checkout_success():
-    # Retrieve order details
-    order_items = request.args.get('order_items')  # JSON string
-    total_price = request.args.get('total_price')
-    customer_name = request.args.get('fullName')
-    email = request.args.get('email')
-    phone = request.args.get('phone')
-    address = request.args.get('address')
-    city = request.args.get('city')
-    postal_code = request.args.get('postalCode')
-    preferred_contact = request.args.get('preferredContact')
-    notes = request.args.get('notes')
+    # order_id = request.args.get('order_id')
+    # Fetch order from Supabase
+    # response = supabase.table('orders').select("*").eq("id", order_id).execute()
+    # order = response.data[0] if response.data else {}
 
-    items = json.loads(order_items) if order_items else {}
-
-    # --- Twilio Messaging ---
-    account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-    auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
-    twilio_number = os.environ.get("TWILIO_PHONE_NUMBER")
-    my_number = os.environ.get("MY_PHONE_NUMBER")
-
-    client = Client(account_sid, auth_token)
+    # Parse items safely
+    # try:
+        # items = json.loads(order.get("order_items", "{}"))
+    # except Exception as e:
+        # print(f"Error parsing order_items: {e}")
+        # items = {}
 
     # Build message body
-    message_body = f"""
-    New Order Received!
-    Customer: {customer_name}
-    Email: {email}
-    Phone: {phone}
-    Address: {address}, {city}, {postal_code}
-    Preferred Contact: {preferred_contact}
-    Notes: {notes or 'None'}
+    # message_body = f"""
+    # New Order Received!
+    # Customer: {order.get('customer_name')}
+    # Email: {order.get('customer_email')}
+    # Phone: {order.get('customer_phone')}
+    # Address: {order.get('customer_address')}, {order.get('customer_city')} {order.get('customer_postal_code')}
+    # Preferred Contact: {order.get('customer_preferred_contact')}
+    # Notes: {order.get('customer_notes') or 'None'}
 
-    Items:
-    """
-    for id, item in items.items():
-        message_body += f"- {item['name']} x{item['quantity']} (${item['price']:.2f} each)\n"
+    # Items:
+    # """
+    # for _, item in items.items():
+        # message_body += f"- {item['name']} x{item['quantity']} (${item['price']:.2f} each)\n"
+    # message_body += f"\nTotal: ${order.get('total_price')}"
 
-    message_body += f"\nTotal: ${total_price}"
+    # Send email
+    try:
+        SMTP_HOST = "smtp.gmail.com"
+        SMTP_PORT = 587
+        SMTP_USER = os.environ.get("SMTP_USER")
+        SMTP_PASS = os.environ.get("SMTP_PASS")
 
-    # Send SMS
-    client.messages.create(
-        body=message_body,
-        from_=twilio_number,
-        to=my_number
-    )
+        msg = MIMEText("ther's a new order")
+        msg["Subject"] = "New Order Notification"
+        msg["From"] = SMTP_USER
+        msg["To"] = SMTP_USER  # or order.get('customer_email') if you want to notify customer
 
-    # Render success page
-    return render_template(
-        'checkout_success.html',
-        order_items=items,
-        total_price=total_price,
-        customer_name=customer_name,
-        email=email,
-        phone=phone,
-        address=address,
-        city=city,
-        postal_code=postal_code,
-        preferred_contact=preferred_contact,
-        notes=notes
-    )
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASS)
+            server.send_message(msg)
+        print("Email sent")
+    except Exception as e:
+        print(f"SMTP email failed: {e}")
+
+    return render_template('checkout_success.html')#, order=order, items=items)
