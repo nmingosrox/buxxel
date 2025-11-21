@@ -2,7 +2,59 @@ from flask import Blueprint, request, jsonify, current_app, render_template
 from buxxel.extensions import supabase
 from buxxel.auth.decorators import auth_required
 
-listings_api_bp = Blueprint('listings_api', __name__, url_prefix='/api')
+listings_api = Blueprint('listings_api', __name__, url_prefix='/listings_api')
+
+# Adds new listing to listings table in supabase
+@admin_api_bp.route('/add_listing/', methods=['GET', 'POST'])
+def create_listing(purveyor_id):
+    try:
+        if request.method == 'GET':
+            # ✅ Fetch categories from Supabase so user can select from them
+            categories_response = supabase.table('categories').select("id, name").execute()
+            categories = categories_response.data
+
+            # Render a template with categories dropdown
+            return render_template("admin/add_listing.html", 
+                                   purveyor_id=purveyor_id, 
+                                   categories=categories)
+
+        elif request.method == 'POST':
+            data = request.form
+
+            # Required fields
+            if not all([data.get('name'),
+                        data.get('price'),
+                        data.get('description'),
+                        data.get('image_url'),
+                        data.get('category_id')]):
+                return jsonify({"error": "Missing required listing data."}), 400
+
+            price = float(data.get('price'))
+            final_price = price * (1 + current_app.config['COMMISSION_RATE'])
+
+            # Stock only applies if category is a product-type category
+            stock = int(data.get('stock')) if data.get('stock') else 0
+
+            tags = [tag.strip().lower() for tag in data.get('tags', '').split(',') if tag.strip()]
+
+            listing_data = {
+                "name": data.get('name'),
+                "price": final_price,
+                "image_urls": [data.get('image_url')],
+                "category_id": data.get('category_id'),   # ✅ use category_id from Supabase
+                "description": data.get('description'),
+                "stock": stock,
+                "purveyor_id": purveyor_id
+            }
+
+            response = supabase.table('listings').insert(listing_data).execute()
+            return jsonify(response.data[0]), 201
+
+    except (ValueError, TypeError):
+        return jsonify({"error": "Price and stock must be valid numbers."}), 400
+    except Exception as e:
+        current_app.logger.error(f"Listing creation error: {e}", exc_info=True)
+        return jsonify({"error": "An unexpected error occurred during listing creation."}), 500
 
 @listings_api_bp.route('/listings/paged', methods=['GET'])
 def get_paged_listings():
@@ -26,32 +78,6 @@ def get_paged_listings():
     except Exception as e:
         current_app.logger.error(f"Error fetching paged listings: {e}")
         return jsonify({"error": "Failed to load listings."}), 500
-
-@listings_api_bp.route('/listings', methods=['POST'])
-@auth_required
-def create_listing(user):
-    try:
-        data = request.form
-        if not all([data.get('name'), data.get('price'), data.get('description'), data.get('stock'), data.get('image_url')]):
-            return jsonify({"error": "Missing required listing data."}), 400
-        
-        price = float(data.get('price'))
-        stock = int(data.get('stock'))
-        final_price = price * (1 + current_app.config['COMMISSION_RATE'])
-        tags = [tag.strip().lower() for tag in data.get('tags', '').split(',') if tag.strip()]
-
-        listing_data = {
-            "name": data.get('name'), "price": final_price, "image_urls": [data.get('image_url')],
-            "tags": tags, "category": tags[0] if tags else 'general', "description": data.get('description'),
-            "stock": stock, "pre_zero_stock": stock if stock > 0 else 1, "user_id": user.id
-        }
-        response = supabase.table('listings').insert(listing_data).execute()
-        return jsonify(response.data[0]), 201
-    except (ValueError, TypeError):
-        return jsonify({"error": "Price and stock must be valid numbers."}), 400
-    except Exception as e:
-        current_app.logger.error(f"Listing creation error: {e}", exc_info=True)
-        return jsonify({"error": "An unexpected error occurred during listing creation."}), 500
 
 @listings_api_bp.route('/me/listings', methods=['GET'])
 @auth_required

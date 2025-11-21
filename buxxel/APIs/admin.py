@@ -9,9 +9,13 @@ admin_api_bp = Blueprint('admin_api', __name__, url_prefix='/api')
 @admin_api_bp.route('/purveyors/add', methods=['POST'])
 def add_purveyor():
     data = {
+        #c
         "name": request.form.get("name"),
+        #c
         "email": request.form.get("email"),
+        #c
         "phone": request.form.get("phone"),
+        #c
         "website": request.form.get("website"),
         "logo_url": request.form.get("logo_url"),
         "description": request.form.get("description"),
@@ -85,47 +89,55 @@ def edit_purveyor_api(purveyor_id):
     else:
         return jsonify({"error": "Failed to update purveyor."}), 400
 
-@admin_api_bp.route('/purveyor/<purveyor_id>/listings/add_listing', methods=['POST'])
+# Adds new listing to listings table in supabase
+@admin_api_bp.route('/purveyor/<purveyor_id>/listings/add_listing', methods=['GET', 'POST'])
 def create_listing(purveyor_id):
     try:
-        data = request.form.to_dict()  # convert to dict for easier debugging
-        current_app.logger.debug(f"Form data received: {data}")
+        if request.method == 'GET':
+            # ✅ Fetch categories from Supabase so user can select from them
+            categories_response = supabase.table('categories').select("id, name").execute()
+            categories = categories_response.data
 
-        required_fields = ['name', 'price', 'description', 'image_url', 'category_id']
-        missing = [field for field in required_fields if not data.get(field)]
-        if missing:
-            return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
+            # Render a template with categories dropdown
+            return render_template("admin/add_listing.html", 
+                                   purveyor_id=purveyor_id, 
+                                   categories=categories)
 
-        # Validate numeric fields
-        try:
-            price = float(data['price'])
-        except ValueError:
-            return jsonify({"error": "Price must be a valid number."}), 400
+        elif request.method == 'POST':
+            data = request.form
 
-        final_price = price * (1 + current_app.config['COMMISSION_RATE'])
-        stock = int(data.get('stock', 0)) if data.get('stock') else 0
+            # Required fields
+            if not all([data.get('name'),
+                        data.get('price'),
+                        data.get('description'),
+                        data.get('image_url'),
+                        data.get('category_id')]):
+                return jsonify({"error": "Missing required listing data."}), 400
 
-        tags = [tag.strip().lower() for tag in data.get('tags', '').split(',') if tag.strip()]
+            price = float(data.get('price'))
+            final_price = price * (1 + current_app.config['COMMISSION_RATE'])
 
-        listing_data = {
-            "name": data['name'],
-            "price": final_price,
-            "image_urls": [data['image_url']],
-            "category_id": data['category_id'],
-            "description": data['description'],
-            "stock": stock,
-            "purveyor_id": purveyor_id,
-            "tags": tags
-        }
+            # Stock only applies if category is a product-type category
+            stock = int(data.get('stock')) if data.get('stock') else 0
 
-        response = supabase.table('listings').insert(listing_data).execute()
-        return jsonify(response.data), 201
+            tags = [tag.strip().lower() for tag in data.get('tags', '').split(',') if tag.strip()]
+
+            listing_data = {
+                "name": data.get('name'),
+                "price": final_price,
+                "image_urls": [data.get('image_url')],
+                "category_id": data.get('category_id'),   # ✅ use category_id from Supabase
+                "description": data.get('description'),
+                "stock": stock,
+                "purveyor_id": purveyor_id
+            }
+
+            response = supabase.table('listings').insert(listing_data).execute()
+            return jsonify(response.data[0]), 201
 
     except Exception as e:
         current_app.logger.error(f"Listing creation error: {e}", exc_info=True)
         return jsonify({"error": "An unexpected error occurred during listing creation."}), 500
-
-
 # Edits an existing listing in supabase
 @admin_api_bp.route('purveyor/<purveyor_id>/listings/<listing_id>/edit', methods=['POST'])
 def edit_listing(purveyor_id, listing_id):

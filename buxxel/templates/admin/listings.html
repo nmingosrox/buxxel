@@ -2,6 +2,8 @@
 {% import "macros/admin_nav.html" as admin %}
 {% block content %}
 {{ admin.admin_nav() }}
+<!-- Add new listing -->
+<a class="btn btn-outline-success" href=()>add listing</a>
 <!-- Listings Section -->
 <section id="listings">
   <h5>Listings</h5>
@@ -34,6 +36,84 @@
   View Listing
 </button>
 
+<!-- Add Listing Button -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newListingModal">
+      <i class="bi bi-plus-circle"></i> Add New Listing
+    </button>
+
+<!-- New Listing Modal -->
+<div class="modal fade" id="newListingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newListingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="newListingModalLabel">Create a New Listing</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form id="newListingForm" method="POST" action="{{ url_for('listings_api.create_listing', purveyor_id=purveyor.id) }}" enctype="multipart/form-data">
+          
+          <!-- Listing Name -->
+          <div class="mb-3">
+            <label for="newListingName" class="form-label">Listing Name</label>
+            <input type="text" class="form-control" id="newListingName" name="name" required>
+          </div>
+
+  <!-- Listing Category -->
+<div class="mb-3">
+  <label for="newListingCategory" class="form-label">Listing Category</label>
+  <select class="form-select" id="newListingCategory" name="category_id" required>
+    {% for category in categories %}
+      <option value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+  </select>
+  <div class="form-text">Choose a category from the list.</div>
+</div>
+
+
+
+
+          <!-- Price -->
+          <div class="mb-3">
+            <label for="newListingPrice" class="form-label">Price ($)</label>
+            <input type="number" class="form-control" id="newListingPrice" name="price" step="0.01" min="0" required>
+          </div>
+
+          <!-- Stock -->
+          <div class="mb-3" id="stockField">
+            <label for="newListingStock" class="form-label">Available Stock (Quantity)</label>
+            <input type="number" class="form-control" id="newListingStock" name="stock" min="0" value="1">
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="newListingDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="newListingDescription" name="description" rows="4" required></textarea>
+          </div>
+
+          <!-- Product Image -->
+          <div class="mb-3">
+            <label class="form-label">Product Image</label>
+            <!-- Uploadcare widget -->
+            <input type="hidden" role="uploadcare-uploader" name="image_url" 
+                   data-images-only="true" 
+                   data-crop="free" 
+                   data-image-shrink="1920x1920 80%" 
+                   id="new-uploadcare-widget" />
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary w-100">Post Listing</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+            
 <!-- View Listing Modal -->
 <div class="modal fade" id="viewListingModal-{{ listing.id }}" tabindex="-1" aria-labelledby="viewListingModalLabel-{{ listing.id }}" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">

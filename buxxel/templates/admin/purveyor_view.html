@@ -64,17 +64,18 @@
             <input type="text" class="form-control" id="newListingName" name="name" required>
           </div>
 
-          <!-- Listing Category -->
-          <div class="mb-3">
-            <label for="newListingCategory" class="form-label">Listing Category</label>
-            <input class="form-control" list="categoriesList" id="newListingCategory" name="category_id" required>
-            <datalist id="categoriesList">
-              {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-              {% endfor %}
-            </datalist>
-            <div class="form-text">Start typing to search, or select from the dropdown.</div>
-          </div>
+  <!-- Listing Category -->
+<div class="mb-3">
+  <label for="newListingCategory" class="form-label">Listing Category</label>
+  <select class="form-select" id="newListingCategory" name="category_id" required>
+    {% for category in categories %}
+      <option value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+  </select>
+  <div class="form-text">Choose a category from the list.</div>
+</div>
+
+
 
 
           <!-- Price -->
