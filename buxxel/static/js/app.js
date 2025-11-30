@@ -34,6 +34,7 @@ $(document).ready(function() {
         let totalPrice = 0;
         const cartItemsContainer = $('#cart-items-container');
         cartItemsContainer.empty();
+        const stickyFooter = $('#sticky-cart-footer');
 
         if (Object.keys(cart).length === 0) {
             cartItemsContainer.html('<p>Your cart is empty.</p>');
@@ -65,6 +66,15 @@ $(document).ready(function() {
 
         $('#cart-count').text(totalItems);
         $('#cart-total').text(totalPrice.toFixed(2));
+
+        // --- Logic for the Sticky Cart Footer ---
+        if (totalItems > 0) {
+            $('#sticky-cart-info').text(`${totalItems} item${totalItems > 1 ? 's' : ''} in your cart`);
+            $('#sticky-cart-total').text(`$${totalPrice.toFixed(2)}`);
+            stickyFooter.slideDown(); // Use a nice animation to show it
+        } else {
+            stickyFooter.slideUp(); // Hide it if the cart is empty
+        }
     }
 
     // 3. Save Cart to Local Storage
@@ -203,7 +213,7 @@ $(document).ready(function() {
     function loadMoreListings(isNewFilter = false) {
         const button = $('#load-more-btn');
         if (button.prop('disabled') && !isNewFilter) return; // Don't load if already loading, unless it's a new filter
-
+    
         let nextPage;
         if (isNewFilter) {
             $('#listing-grid').empty(); // Clear the grid for new filter results
@@ -212,18 +222,18 @@ $(document).ready(function() {
         } else {
             nextPage = button.data('next-page');
         }
-
+    
         if (!nextPage) return;
-
+    
         const originalHtml = button.html();
         button.prop('disabled', true).html(
             `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`
         );
-
+    
         // Get current filter state
         const activeTag = $('.tag-btn.active').data('tag') || 'all';
-        const searchTerm = $('#search-bar').val();
-
+        const searchTerm = $(window).width() < 992 ? $('#search-bar-mobile').val() : $('#search-bar-desktop').val();
+    
         $.ajax({
             url: `/api/listings/paged?page=${nextPage}&tag=${activeTag}&search=${encodeURIComponent(searchTerm)}`,
             type: 'GET',
@@ -231,17 +241,17 @@ $(document).ready(function() {
                 const listings = response.listings;
                 const pagination = response.pagination;
 
-                listings.forEach(listing => {
+                if (listings && listings.length > 0) {
+                    listings.forEach(listing => {
                     const imageUrl = (listing.image_urls && listing.image_urls.length > 0) 
                         ? listing.image_urls[0] 
                         : 'https://via.placeholder.com/300x200.png?text=No+Image';
-
+    
                     const imageHtml = `
                         <a href="#" class="image-preview-trigger" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" data-image-url="${imageUrl}">
                             <img src="${imageUrl}" class="card-img-top" alt="${listing.name}">
                         </a>
                     `;
-
                     const productCardHtml = `
                         <div class="col-lg-3 col-md-4 col-sm-6 listing-card" 
                              data-tags="${(listing.tags || []).join(',')}" 
@@ -252,30 +262,25 @@ $(document).ready(function() {
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">${listing.name}</h5>
                                     <p class="card-text fw-bold fs-5 mb-3">$${listing.price.toFixed(2)}</p>
-                                    <div class="mt-auto">
-                                        <button class="btn btn-warning w-100 mb-2 add-to-cart-btn"
+                                    <div class="mt-auto d-grid">
+                                        <button class="btn btn-warning add-to-cart-btn"
                                                 data-id="${listing.id}"
                                                 data-name="${listing.name}"
                                                 data-price="${listing.price}">
                                             Add to Cart
-                                        </button>
-                                        <button class="btn btn-outline-secondary w-100 view-purveyor-btn"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#purveyorProfileModal"
-                                                data-user-id="${listing.user_id}">
-                                            View Purveyor</button>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>`;
                     $('#listing-grid').append(productCardHtml);
-                });
-
-                // If it was a new filter and no results came back, show a message.
-                if (isNewFilter && listings.length === 0) {
+                    });
+                } else if (isNewFilter) {
+                    // If it was a new filter and no results came back, show a message.
                     $('#listing-grid').html('<div class="text-center p-5 col-12"><h4 class="text-muted">No listings match your filters.</h4></div>');
                 }
+
+
 
                 if (pagination.has_next) {
                     button.data('next-page', pagination.page + 1);
@@ -336,7 +341,12 @@ $(document).ready(function() {
     });
 
     // 2. Search Bar Filter
-    $('#search-bar').on('keyup', debounce(function() {
+    $('#search-bar-desktop, #search-bar-mobile').on('keyup', debounce(function() {
+        // Sync the values between the two search bars
+        const currentValue = $(this).val();
+        $('#search-bar-desktop').val(currentValue);
+        $('#search-bar-mobile').val(currentValue);
+
         // Fetch new filtered data
         loadMoreListings(true); // isNewFilter = true
     }, 300)); // 300ms delay

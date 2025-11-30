@@ -1,23 +1,42 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>My Dashboard</h2>
-        <div class="btn-group">
-            <a href="{{ url_for('dashboard.my_orders_page') }}" class="btn btn-outline-info">
-                <i class="bi bi-receipt"></i> My Orders
-            </a>
-            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
-                <i class="bi bi-gear-fill"></i> Settings
-            </button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newListingModal">
+<div class="bg-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h2">My Purveyor Dashboard</h1>
+                <p class="lead text-muted">Manage your listings, track sales, and view your orders.</p>
+            </div>
+            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#newListingModal">
                 <i class="bi bi-plus-circle"></i> Add New Listing
             </button>
         </div>
     </div>
-    <p>Here you can manage all the listings you have posted on Buxxel.</p>
-    <hr>
+</div>
+
+<div class="container my-4">
+    <!-- Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">My Orders</h5>
+                    <p class="card-text">View your purchase history and track order status.</p>
+                    <a href="{{ url_for('dashboard.my_orders_page') }}" class="btn btn-outline-info stretched-link">View My Orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Settings</h5>
+                    <p class="card-text">Update your public username and other profile details.</p>
+                    <a href="#" class="btn btn-outline-secondary stretched-link" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">Open Settings</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Message for guests -->
     <div id="guest-message" class="alert alert-warning" style="display: none;">
@@ -27,22 +46,29 @@
 
     <!-- Container for listings -->
     <div id="dashboard-content" style="display: none;">
-        <!-- Search and Sort Controls -->
-        <div class="row justify-content-between mb-4">
-            <div class="col-md-4">
-                <select class="form-select" id="dashboard-sort-select">
-                    <option value="created_at,desc" selected>Sort by: Newest</option>
-                    <option value="price,asc">Sort by: Price (Low to High)</option>
-                    <option value="price,desc">Sort by: Price (High to Low)</option>
-                    <option value="stock,asc">Sort by: Stock (Low to High)</option>
-                </select>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">My Listings</h4>
             </div>
-            <div class="col-md-5">
-                <input type="text" class="form-control" id="dashboard-search-bar" placeholder="Search your listings by name...">
+            <div class="card-body">
+                <!-- Search and Sort Controls -->
+                <div class="row justify-content-between mb-4">
+                    <div class="col-md-4">
+                        <select class="form-select" id="dashboard-sort-select">
+                            <option value="created_at,desc" selected>Sort by: Newest</option>
+                            <option value="price,asc">Sort by: Price (Low to High)</option>
+                            <option value="price,desc">Sort by: Price (High to Low)</option>
+                            <option value="stock,asc">Sort by: Stock (Low to High)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" id="dashboard-search-bar" placeholder="Search your listings by name...">
+                    </div>
+                </div>
+                <div id="my-listings-container">
+                    <!-- Listings will be injected here -->
+                </div>
             </div>
-        </div>
-        <div id="my-listings-container">
-            <!-- Listings will be injected here -->
         </div>
         <div id="loading-spinner" class="text-center">
             <div class="spinner-border" role="status">
