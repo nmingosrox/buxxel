@@ -100,3 +100,38 @@ def admin_required(f):
         # If all checks pass, proceed to the decorated function.
         return f(user, *args, **kwargs)
     return decorated_function
+
+def admin_api_required(f):
+    """
+    A decorator to protect admin-only API endpoints.
+    It checks for a valid JWT and that the user's ID matches the hardcoded admin ID.
+    """
+    # --- MVP SIMPLIFICATION ---
+    ADMIN_USER_ID = "34e36729-1ef1-4838-85b3-fc7e0456b341"
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"error": "Authorization header is missing or invalid."}), 401
+
+        jwt = auth_header.split(' ')[1]
+        try:
+            # IMPORTANT: Use a fresh, isolated client for user validation to avoid
+            # "tainting" the global supabase client instances.
+            from buxxel.extensions import create_client
+            auth_validation_client = create_client(current_app.config['SUPABASE_URL'], current_app.config['SUPABASE_SERVICE_KEY'])
+            user_response = auth_validation_client.auth.get_user(jwt)
+            user = user_response.user
+            if not user:
+                return jsonify({"error": "Invalid or expired token."}), 401
+        except AuthApiError as e:
+            return jsonify({"error": f"Authentication error: {e.message}"}), 401
+        
+        # Now, check if the validated user is the admin
+        if str(user.id) != ADMIN_USER_ID:
+            return jsonify({"error": "Admin privileges required."}), 403
+
+        # Pass the user object to the decorated function
+        return f(user, *args, **kwargs)
+    return decorated_function

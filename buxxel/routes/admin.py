@@ -13,4 +13,10 @@ def dashboard(user):
 @admin_bp.route('/users')
 @admin_required
 def manage_users(user):
-    return render_template('admin/dashboard.html', page_title="Manage Users") # Placeholder
+    return render_template('admin/dashboard.html', page_title="Manage Users") # Placeholder for user management
+
+@admin_bp.route('/orders')
+@admin_required
+def manage_orders(user):
+    """Renders the page for managing all orders."""
+    return render_template('admin/orders.html')

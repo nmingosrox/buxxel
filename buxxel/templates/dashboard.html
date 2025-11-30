@@ -5,6 +5,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>My Dashboard</h2>
         <div class="btn-group">
+            <a href="{{ url_for('dashboard.my_orders_page') }}" class="btn btn-outline-info">
+                <i class="bi bi-receipt"></i> My Orders
+            </a>
             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
                 <i class="bi bi-gear-fill"></i> Settings
             </button>

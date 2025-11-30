@@ -24,6 +24,8 @@ def create_app(config_class=Config):
     from .APIs.profiles import profiles_api_bp
     from .routes.checkout import checkout_bp
     from .routes.admin import admin_bp
+    from .APIs.admin_orders import admin_orders_api_bp
+    from .APIs.orders import orders_api_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(dashboard_bp)
@@ -31,6 +33,8 @@ def create_app(config_class=Config):
     app.register_blueprint(profiles_api_bp)
     app.register_blueprint(checkout_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(admin_orders_api_bp)
+    app.register_blueprint(orders_api_bp)
 
     # Register context processors
     @app.context_processor
