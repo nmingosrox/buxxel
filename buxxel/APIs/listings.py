@@ -24,9 +24,13 @@ def get_paged_listings():
 
         # The RPC function doesn't join profiles, so we'll have to do that here if needed,
         # or modify the RPC. For now, let's return the listings.
-        listings = [item['listing'] for item in response.data]
-        total_listings = response.data[0]['total_count'] if response.data else 0
-        has_next = (page * per_page) < total_listings
+        if response.data:
+            listings = [item['listing'] for item in response.data]
+            total_listings = response.data[0]['total_count']
+            has_next = (page * per_page) < total_listings
+        else:
+            listings = []
+            has_next = False
 
         return jsonify({"listings": listings, "pagination": {"page": page, "has_next": has_next}}), 200
     except APIError as e:
@@ -99,9 +103,14 @@ def get_user_listings(user):
         
         response = supabase.rpc('get_listings_for_authenticated_user', params).execute()
 
-        listings = [item['listing'] for item in response.data]
-        total_listings = response.data[0]['total_count'] if response.data else 0
-        has_next = (page * per_page) < total_listings
+        if response.data:
+            listings = [item['listing'] for item in response.data]
+            total_listings = response.data[0]['total_count']
+            has_next = (page * per_page) < total_listings
+        else:
+            listings = []
+            total_listings = 0
+            has_next = False
 
         return jsonify({"listings": listings, "pagination": {"page": page, "has_next": has_next, "total_listings": total_listings}}), 200
     except Exception as e:

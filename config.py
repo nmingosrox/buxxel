@@ -11,7 +11,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
 
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+    SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY") # For server-side admin access
+    SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")       # For client-side browser access
     UPLOADCARE_PUBLIC_KEY = os.environ.get("UPLOADCARE_PUBLIC_KEY")
 
     # You can add other config like COMMISSION_RATE here

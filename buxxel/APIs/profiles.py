@@ -10,8 +10,13 @@ def handle_my_profile(user):
     """Handles fetching or updating the authenticated user's profile."""
     if request.method == 'GET':
         try:
-            profile = supabase.table('profiles').select("username").eq('id', user.id).single().execute()
-            return jsonify(profile.data or {}), 200
+            # Remove .single() to prevent an error if the profile doesn't exist yet.
+            response = supabase.table('profiles').select("username, user_role").eq('id', user.id).execute()
+            # Manually check if data was returned.
+            if response.data:
+                return jsonify(response.data[0]), 200
+            else:
+                return jsonify({}), 200 # Return an empty object if no profile is found.
         except Exception as e:
             return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
@@ -24,7 +29,11 @@ def handle_my_profile(user):
         update_data = {"username": username, "updated_at": "now()"}
         try:
             response = supabase.table('profiles').update(update_data).eq('id', user.id).execute()
-            return jsonify(response.data[0]), 200
+            # Check if the update was successful and returned data before accessing it.
+            if response.data:
+                return jsonify(response.data[0]), 200
+            else:
+                return jsonify({"error": "Profile not found, could not update."}), 404
         except Exception as e:
             return jsonify({"error": f"Failed to update profile: {str(e)}"}), 500
 

@@ -103,6 +103,29 @@ $(document).ready(function() {
         }
     });
 
+    // --- CHECKOUT BUTTON LOGIC ---
+    $('#checkout-btn').on('click', async function() {
+        const { data, error } = await window.supabaseClient.auth.getSession();
+        if (error || !data.session) {
+            // User is not logged in. Show the auth modal with a message.
+            $('#cartModal').modal('hide'); // Hide the cart modal first
+
+            // Use a timeout to ensure the cart modal is fully hidden before the auth modal is shown
+            setTimeout(() => {
+                $('#auth-context-message')
+                    .text('You must log in or sign up to proceed to checkout.')
+                    .show();
+                const authModal = new bootstrap.Modal(document.getElementById('authModal'));
+                authModal.show();
+            }, 500);
+
+        } else {
+            // User is logged in, proceed to the checkout page.
+            window.location.href = '/checkout';
+        }
+    });
+
+
     // --- PURVEYOR PROFILE MODAL ---
     let purveyorButton = null;
     let originalButtonHtml = '';
@@ -175,6 +198,7 @@ $(document).ready(function() {
 
     // --- DYNAMIC PAGINATION (INFINITE SCROLL) ---
     const loadMoreContainer = document.getElementById('load-more-container');
+    let observer; // Declare observer in a higher scope
 
     function loadMoreListings(isNewFilter = false) {
         const button = $('#load-more-btn');
@@ -271,7 +295,7 @@ $(document).ready(function() {
 
     const loadMoreBtn = document.getElementById('load-more-btn');
     if (loadMoreContainer) { // Check for the container, not the button
-        const observer = new IntersectionObserver((entries) => {
+        observer = new IntersectionObserver((entries) => { // Assign to the higher-scoped variable
             // Only trigger for the button, if it exists
             if (entries[0].isIntersecting && loadMoreBtn) {
                 loadMoreListings(false); // isNewFilter = false
@@ -436,12 +460,19 @@ $(document).ready(function() {
         const guestCtaSection = $('#guest-cta-section');
 
         if (session && session.user) {
-            // User is logged in
+            // User is logged in.
             $('#auth-guest').addClass('d-none');
             $('#auth-user').removeClass('d-none').addClass('d-flex');
             $('#user-email').text(session.user.email);
-            // The guest CTA should be hidden for logged-in users
             guestCtaSection.hide();
+
+            // --- MVP SIMPLIFICATION ---
+            // Instead of fetching the profile to check a role, we just check the user's ID
+            // against the hardcoded admin ID, just like the backend decorator does.
+            const ADMIN_USER_ID = "34e36729-1ef1-4838-85b3-fc7e0456b341";
+            if (session.user.id === ADMIN_USER_ID) {
+                $('#admin-link').removeClass('d-none');
+            }
         } else {
             // User is a guest
             $('#auth-guest').removeClass('d-none').addClass('d-flex');
