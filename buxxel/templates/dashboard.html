@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Dashboard</h2>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
+                <i class="bi bi-gear-fill"></i> Settings
+            </button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newListingModal">
+                <i class="bi bi-plus-circle"></i> Add New Listing
+            </button>
+        </div>
+    </div>
+    <p>Here you can manage all the listings you have posted on Buxxel.</p>
+    <hr>
+
+    <!-- Message for guests -->
+    <div id="guest-message" class="alert alert-warning" style="display: none;">
+        <h4>Access Denied</h4>
+        <p>You must be logged in to view your dashboard. Please <a href="#" data-bs-toggle="modal" data-bs-target="#authModal">log in</a>.</p>
+    </div>
+
+    <!-- Container for listings -->
+    <div id="dashboard-content" style="display: none;">
+        <!-- Search and Sort Controls -->
+        <div class="row justify-content-between mb-4">
+            <div class="col-md-4">
+                <select class="form-select" id="dashboard-sort-select">
+                    <option value="created_at,desc" selected>Sort by: Newest</option>
+                    <option value="price,asc">Sort by: Price (Low to High)</option>
+                    <option value="price,desc">Sort by: Price (High to Low)</option>
+                    <option value="stock,asc">Sort by: Stock (Low to High)</option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" id="dashboard-search-bar" placeholder="Search your listings by name...">
+            </div>
+        </div>
+        <div id="my-listings-container">
+            <!-- Listings will be injected here -->
+        </div>
+        <div id="loading-spinner" class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div id="no-listings-message" class="text-center p-5" style="display: none;">
+            <h4 class="text-muted">You haven't posted any listings yet.</h4>
+            <p class="text-muted">Click the "Add New Listing" button to get started.</p>
+        </div>
+ 
+        <!-- Pagination Controls -->
+        <nav id="dashboard-pagination" aria-label="Dashboard navigation" class="d-flex justify-content-center mt-4" style="display: none !important;">
+            <ul class="pagination">
+                <li class="page-item" id="prev-page">
+                    <a class="page-link" href="#" aria-label="Previous">Previous</a>
+                </li>
+                <li class="page-item" id="next-page">
+                    <a class="page-link" href="#" aria-label="Next">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Profile Settings Modal -->
+<div class="modal fade" id="profileSettingsModal" tabindex="-1" aria-labelledby="profileSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileSettingsModalLabel">Profile Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileSettingsForm">
+                    <div id="profile-alert" class="alert" role="alert" style="display: none;"></div>
+                    <div class="mb-3">
+                        <label for="usernameInput" class="form-label">Public Username</label>
+                        <input type="text" class="form-control" id="usernameInput" placeholder="Enter a public username">
+                        <div class="form-text">This will be displayed on your public profile page.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Username</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- New Listing Modal -->
+<div class="modal fade" id="newListingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newListingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newListingModalLabel">Create a New Listing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newListingForm" action="{{ url_for('listings_api.create_listing') }}" method="POST" enctype="multipart/form-data">
+                    <div id="new-listing-alert" class="alert" role="alert" style="display: none;"></div>
+                    <div class="mb-3">
+                        <label for="newListingName" class="form-label">Listing Name</label>
+                        <input type="text" class="form-control" id="newListingName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newListingPrice" class="form-label">Price ($)</label>
+                        <input type="number" class="form-control" id="newListingPrice" step="0.01" min="0" required>
+                        <div class="form-text">The final price shown to buyers will include a 10% platform commission.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newListingStock" class="form-label">Available Stock (Quantity)</label>
+                        <input type="number" class="form-control" id="newListingStock" min="0" value="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newListingDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="newListingDescription" rows="4" placeholder="Provide details about your item..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newListingTags" class="form-label">Tags</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="newListingTags" placeholder="e.g. books, vintage, handmade" required>
+                            <button class="btn btn-outline-secondary" type="button" id="generate-tags-btn">Generate Tags with AI</button>
+                        </div>
+                        <div class="form-text">Enter comma-separated tags or generate them from your description.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Product Image</label>
+                        <input type="hidden" role="uploadcare-uploader" data-public-key="{{ uploadcare_public_key }}" data-images-only="true" data-crop="free" data-image-shrink="1920x1920 80%" id="new-uploadcare-widget" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Post Listing</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Listing Modal -->
+<div class="modal fade" id="editListingModal" tabindex="-1" aria-labelledby="editListingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editListingModalLabel">Edit Listing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editListingForm" enctype="multipart/form-data">
+                    <div id="edit-listing-alert" class="alert" role="alert" style="display: none;"></div>
+                    <input type="hidden" id="editListingId">
+                    
+                    <div class="mb-3">
+                        <label for="editListingName" class="form-label">Listing Name</label>
+                        <input type="text" class="form-control" id="editListingName" name="name" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editListingPrice" class="form-label">Price ($)</label>
+                            <input type="number" class="form-control" id="editListingPrice" name="price" step="0.01" min="0" required>
+                            <div class="form-text">Enter your desired price. A 10% commission will be added to the final price.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editListingStock" class="form-label">Available Stock</label>
+                            <input type="number" class="form-control" id="editListingStock" name="stock" min="0" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editListingDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editListingDescription" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editListingTags" class="form-label">Tags</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="editListingTags" name="tags" required>
+                            <button class="btn btn-outline-secondary" type="button" id="edit-generate-tags-btn">Generate Tags with AI</button>
+                        </div>
+                        <div class="form-text">Enter comma-separated tags or generate them from your description.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Product Image</label>
+                        <p class="form-text">The widget shows your current image. Upload a new one to replace it.</p>
+                        <input type="hidden"
+                               role="uploadcare-uploader"
+                               data-images-only="true"
+                               data-crop="free"
+                               data-image-shrink="1920x1920 80%"
+                               id="edit-uploadcare-widget" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Update Listing</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
