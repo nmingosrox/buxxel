@@ -41,6 +41,12 @@
             <span id="location-display" class="navbar-text text-light me-3 d-none d-lg-inline"></span>
 
             <ul class="navbar-nav d-flex align-items-center flex-row">
+                <!-- Consistent Home Button -->
+                <li class="nav-item me-3">
+                    <a class="nav-link" href="{{ url_for('main.index') }}" aria-label="Home">
+                        <i class="bi bi-house-door-fill fs-4"></i>
+                    </a>
+                </li>
                 <li class="nav-item me-3">
                     <a class="nav-link position-relative" href="#" id="cart-icon" data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="View shopping cart">
                         <i class="bi bi-cart-fill fs-4"></i>
