@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ page_title or 'Manage Listings' }}</h2>
+        <div>
+            <a href="#" class="btn btn-primary"> <!-- TODO: Link to create listing page -->
+                <i class="bi bi-plus-circle"></i> Create New Listing
+            </a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    <p class="lead">From here, you can create, view, edit, and delete listings.</p>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" style="width: 10%;">Image</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Purveyor</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="listings-table-body">
+                <!-- Listings will be injected here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="text-center mt-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- No Listings Message -->
+    <div id="no-listings-message" class="text-center p-5" style="display: none;">
+        <h4 class="text-muted">No listings found.</h4>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script src="{{ url_for('static', filename='js/admin_listings.js') }}"></script>
+{% endblock %}

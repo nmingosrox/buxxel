@@ -49,7 +49,7 @@ $(document).ready(function() {
                     <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}">
                         <div>
                             <h6 class="my-0">${item.name}</h6>
-                            <small class="text-muted">Price: $${item.price.toFixed(2)}</small>
+                            <small class="text-muted">Price: N$${item.price.toFixed(2)}</small>
                         </div>
                         <div class="d-flex align-items-center">
                             <button class="btn btn-sm btn-outline-secondary decrease-qty" data-id="${id}">-</button>
@@ -70,7 +70,7 @@ $(document).ready(function() {
         // --- Logic for the Sticky Cart Footer ---
         if (totalItems > 0) {
             $('#sticky-cart-info').text(`${totalItems} item${totalItems > 1 ? 's' : ''} in your cart`);
-            $('#sticky-cart-total').text(`$${totalPrice.toFixed(2)}`);
+            $('#sticky-cart-total').text(`N$${totalPrice.toFixed(2)}`);
             stickyFooter.slideDown(); // Use a nice animation to show it
         } else {
             stickyFooter.slideUp(); // Hide it if the cart is empty
@@ -261,7 +261,7 @@ $(document).ready(function() {
                                 ${imageHtml}
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">${listing.name}</h5>
-                                    <p class="card-text fw-bold fs-5 mb-3">$${listing.price.toFixed(2)}</p>
+                                    <p class="card-text fw-bold fs-5 mb-3">N$${listing.price.toFixed(2)}</p>
                                     <div class="mt-auto d-grid">
                                         <button class="btn btn-warning add-to-cart-btn"
                                                 data-id="${listing.id}"

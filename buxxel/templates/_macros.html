@@ -4,7 +4,7 @@
         <img src="{{ listing.image_urls[0] if listing.image_urls else 'https://via.placeholder.com/300x200.png?text=No+Image' }}" class="card-img-top" alt="{{ listing.name }}">
         <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ listing.name }}</h5>
-            <p class="card-text fw-bold fs-5 mb-3">${{ "%.2f"|format(listing.price) }}</p>
+            <p class="card-text fw-bold fs-5 mb-3">N${{ "%.2f"|format(listing.price) }}</p>
             <div class="mt-auto">
                 <button class="btn btn-warning w-100 mb-2 add-to-cart-btn"
                         data-id="{{ listing.id }}"

@@ -26,7 +26,7 @@ $(document).ready(function() {
                         <h6 class="my-0">${item.name}</h6>
                         <small class="text-muted">Quantity: ${item.quantity}</small>
                     </div>
-                    <span class="text-muted">$${(item.price * item.quantity).toFixed(2)}</span>
+                    <span class="text-muted">N$${(item.price * item.quantity).toFixed(2)}</span>
                 </li>
             `;
             itemList.append(itemHtml);
@@ -37,8 +37,8 @@ $(document).ready(function() {
         // Add the total price to the list
         const totalHtml = `
             <li class="list-group-item d-flex justify-content-between">
-                <span>Total (USD)</span>
-                <strong>$${totalPrice.toFixed(2)}</strong>
+                <span>Total (NAD)</span>
+                <strong>N$${totalPrice.toFixed(2)}</strong>
             </li>
         `;
         itemList.append(totalHtml);

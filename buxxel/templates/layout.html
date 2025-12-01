@@ -94,11 +94,11 @@
     {% block content %}{% endblock %}
 
     <!-- Sticky Cart Footer (hidden by default) -->
-    <div id="sticky-cart-footer" class="fixed-bottom bg-dark text-white p-3 shadow-lg" style="display: none;">
+    <div id="sticky-cart-footer" class="fixed-bottom bg-dark text-white p-3 shadow-lg" style="display: none; z-index: 1040;">
         <div class="container d-flex justify-content-between align-items-center">
             <div>
                 <span id="sticky-cart-info">1 item in your cart</span>
-                <strong class="ms-3" id="sticky-cart-total">$0.00</strong>
+                <strong class="ms-3" id="sticky-cart-total">N$0.00</strong>
             </div>
             <!-- This button will open the cart modal -->
             <button class="btn btn-warning fw-bold" data-bs-toggle="modal" data-bs-target="#cartModal">
@@ -123,7 +123,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <span class="me-auto"><strong>Total: $<span id="cart-total">0.00</span></strong></span>
+                    <span class="me-auto"><strong>Total: N$<span id="cart-total">0.00</span></strong></span>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="checkout-btn">Checkout</button>
                 </div>

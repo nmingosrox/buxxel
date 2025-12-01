@@ -38,7 +38,7 @@ $(document).ready(function() {
                             <td><small>${order.id}</small></td>
                             <td>${customerName}</td>
                             <td>${orderDate}</td>
-                            <td>$${order.total_price.toFixed(2)}</td>
+                            <td>N$${order.total_price.toFixed(2)}</td>
                             <td><span class="badge bg-info text-dark">${order.status}</span></td>
                             <td>
                                 <select class="form-select form-select-sm status-select" data-order-id="${order.id}">
