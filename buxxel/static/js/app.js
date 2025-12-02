@@ -71,9 +71,15 @@ $(document).ready(function() {
         if (totalItems > 0) {
             $('#sticky-cart-info').text(`${totalItems} item${totalItems > 1 ? 's' : ''} in your cart`);
             $('#sticky-cart-total').text(`N$${totalPrice.toFixed(2)}`);
-            stickyFooter.slideDown(); // Use a nice animation to show it
+            stickyFooter.slideDown(function() { // Use a nice animation to show it
+                // After the footer slides down, add padding to the body
+                $('body').css('padding-bottom', stickyFooter.outerHeight() + 'px');
+            });
         } else {
-            stickyFooter.slideUp(); // Hide it if the cart is empty
+            stickyFooter.slideUp(function() { // Hide it if the cart is empty
+                // After the footer slides up, remove padding from the body
+                $('body').css('padding-bottom', '');
+            });
         }
     }
 
@@ -529,15 +535,21 @@ $(document).ready(function() {
     // --- POPULAR TAGS ---
     function loadPopularTags() {
         const container = $('#popular-tags-container');
+        const TAG_LIMIT = 15; // Set a limit for the number of tags to display
         if (!container.length) return;
 
         $.ajax({
             url: '/api/tags/popular',
             type: 'GET',
             success: function(tags) {
+                container.empty(); // Clear previous tags if any
+
                 // Always add an "All" button first
                 container.append('<button class="btn btn-secondary tag-btn active" data-tag="all">All</button>');
-                tags.forEach(tagInfo => {
+                
+                // Slice the tags array to respect the limit
+                const limitedTags = tags.slice(0, TAG_LIMIT);
+                limitedTags.forEach(tagInfo => {
                     const tagButton = `<button class="btn btn-outline-secondary tag-btn" data-tag="${tagInfo.tag}">${tagInfo.tag}</button>`;
                     container.append(tagButton);
                 });

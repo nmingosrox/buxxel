@@ -2,11 +2,13 @@
 
 {% block content %}
 
-<!-- Categories Bar -->
-<div class="popular-tags-bar bg-light shadow-sm p-2 mb-4">
-    <div class="container-fluid text-center">
-        <span class="text-muted me-2">Popular Tags:</span>
-        <span id="popular-tags-container"></span>
+<!-- Horizontally Scrolling Categories Bar -->
+<div class="popular-tags-bar bg-light shadow-sm py-2 mb-4">
+    <div class="container-fluid d-flex align-items-center">
+        <span class="text-muted me-3 flex-shrink-0">Popular Tags:</span>
+        <div class="tags-scroll-wrapper">
+            <div id="popular-tags-container" class="d-flex flex-nowrap"></div>
+        </div>
     </div>
 </div>
 

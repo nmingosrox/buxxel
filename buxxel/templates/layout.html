@@ -16,7 +16,29 @@
     <!-- Uploadcare Widget -->
     <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
 </head>
+<style>
+    /* Styles for horizontally scrolling tags */
+    .tags-scroll-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .tags-scroll-wrapper::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, and Opera */
+    }
+    #popular-tags-container .tag-btn {
+        flex-shrink: 0; /* Prevent buttons from shrinking */
+        margin-right: 0.5rem;
+    }
+    #popular-tags-container .tag-btn:last-child {
+        margin-right: 0;
+    }
+</style>
 <body>
+    <style>
+        body { transition: padding-bottom 0.3s ease-out; }
+    </style>
 
     <!-- Main Navigation Bar (Sticky on desktop, normal on mobile) -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-lg-top">

@@ -74,8 +74,8 @@ $(document).ready(function() {
                 email: $('#email').val(),
                 address: $('#address').val(),
                 address2: $('#address2').val(),
-                country: $('#country').val(),
-                state: $('#state').val(),
+                country: $('#country-hidden').val(), // Use hidden input for disabled select
+                region: $('#region').val(),
                 zip: $('#zip').val()
             },
             order_details: cart,
