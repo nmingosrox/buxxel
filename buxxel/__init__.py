@@ -1,50 +1,48 @@
 from flask import Flask
-from config import Config
-from supabase import create_client
-from buxxel import extensions
+from flask_sqlalchemy import SQLAlchemy
+from config import DevelopmentConfig
+from .extensions import db, login_manager, migrate
+from dotenv import load_dotenv
+import os
 
-def create_app(config_class=Config):
+load_dotenv()
+
+def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__, instance_relative_config=True)
+   
     app.config.from_object(config_class)
 
-    # Check for essential configuration
-    if not all([app.config['SUPABASE_URL'], app.config['SUPABASE_SERVICE_KEY'], app.config['SUPABASE_ANON_KEY'], app.config['UPLOADCARE_PUBLIC_KEY'], app.config['UPLOADCARE_SECRET_KEY'], app.config.get('SECRET_KEY')]):
-        raise ValueError("All required credentials (SECRET_KEY, Supabase, Uploadcare) must be set in the environment or config.")
+    db.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
 
-    # Initialize extensions
-    # The standard client is for public or user-specific operations. It starts with the anon key
-    # and will be "upgraded" with a user's JWT for authenticated requests.
-    extensions.supabase = create_client(app.config['SUPABASE_URL'], app.config['SUPABASE_ANON_KEY'])
-    # The admin client uses the service role key for admin tasks and bypasses RLS.
-    extensions.supabase_admin = create_client(app.config['SUPABASE_URL'], app.config['SUPABASE_SERVICE_KEY'])
+    login_manager.login_view = "users_bp.login_user"
 
+    if not all([
+      app.config.get('UPLOADCARE_PUBLIC_KEY'),
+      app.config.get('UPLOADCARE_SECRET_KEY'),
+      app.config.get('SECRET_KEY'),
+      app.config.get('SQLALCHEMY_DATABASE_URI')  # or your DB connection string
+    ]):
+        raise RuntimeError("Missing one or more required configuration keys")
+   
     # Register blueprints
     from .routes.main import main_bp
-    from .routes.dashboard import dashboard_bp
-    from .APIs.listings import listings_api_bp
-    from .APIs.profiles import profiles_api_bp
-    from .routes.checkout import checkout_bp
+    from .APIs.listings import listings_bp
+    from .APIs.users import users_bp
     from .routes.admin import admin_bp
-    from .APIs.admin_orders import admin_orders_api_bp
-    from .APIs.orders import orders_api_bp
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(dashboard_bp)
-    app.register_blueprint(listings_api_bp)
-    app.register_blueprint(profiles_api_bp)
-    app.register_blueprint(checkout_bp)
+    app.register_blueprint(listings_bp)
     app.register_blueprint(admin_bp)
-    app.register_blueprint(admin_orders_api_bp)
-    app.register_blueprint(orders_api_bp)
-
+    app.register_blueprint(users_bp)
+    
     # Register context processors
     @app.context_processor
     def inject_global_vars():
         """Injects global variables into all templates."""
         return dict(
             uploadcare_public_key=app.config['UPLOADCARE_PUBLIC_KEY'],
-            supabase_url=app.config['SUPABASE_URL'],
-            supabase_key=app.config['SUPABASE_ANON_KEY'] # Pass the public ANON key to the frontend
         )
 
     return app

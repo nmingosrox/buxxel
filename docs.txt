@@ -1,0 +1,61 @@
+documentaion for buxxel
+
+##########
+STRUCTURE
+##########
+
+buxxel
+├── __pycache__
+│   └── config.cpython-312.pyc
+├── buxxel
+│   ├── APIs
+│   │   ├── admin_orders.py
+│   │   ├── listings.py
+│   │   ├── orders.py
+│   │   └── profiles.py
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-312.pyc
+│   ├── auth
+│   │   └── decorators.py
+│   ├── database.py
+│   ├── extensions.py
+│   ├── routes
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── checkout.py
+│   │   ├── dashboard.html
+│   │   ├── dashboard.py
+│   │   └── main.py
+│   ├── static
+│   │   ├── css
+│   │   │   └── style.css
+│   │   └── js
+│   │       ├── admin_listings.js
+│   │       ├── admin_orders.js
+│   │       ├── admin_users.js
+│   │       ├── app.js
+│   │       ├── checkout.js
+│   │       ├── dashboard.html
+│   │       ├── dashboard.js
+│   │       ├── my_orders.js
+│   │       └── supabaseClient.js
+│   └── templates
+│       ├── _macros.html
+│       ├── admin
+│       │   ├── dashboard.html
+│       │   ├── listings.html
+│       │   ├── orders.html
+│       │   └── users.html
+│       ├── checkout.html
+│       ├── dashboard.html
+│       ├── index.html
+│       ├── layout.html
+│       ├── my_orders.html
+│       └── order_success.html
+├── config.py
+├── flask_app.py
+├── requirements.txt
+├── run.py
+└── supabaseCookieAdapter.js
+ignore the .pyc files

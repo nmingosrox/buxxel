@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% import 'macros/_navbar.html' as ui %}
+{{ ui.navbar() }}
+
 <!-- Horizontally Scrolling Categories Bar -->
 <div class="popular-tags-bar bg-light shadow-sm py-2 mb-4">
     <div class="container-fluid d-flex align-items-center">

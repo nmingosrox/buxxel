@@ -1,58 +1,97 @@
-from flask import Blueprint, request, jsonify, current_app
-from buxxel.extensions import supabase, supabase_admin
-from buxxel.auth.decorators import auth_required
+from flask import Blueprint, request, jsonify
+from buxxel import db
+from buxxel.models import Order, OrderItem, Listing, User
 
-orders_api_bp = Blueprint('orders_api', __name__, url_prefix='/api')
+orders_bp = Blueprint("orders_api", __name__, url_prefix="/api/orders")
 
-@orders_api_bp.route('/orders', methods=['POST'])
-@auth_required
-def create_order(user):
-    """
-    Creates a new order for the authenticated user.
-    """
+# --------------------
+# GET all orders
+# --------------------
+@orders_bp.route("/", methods=["GET"])
+def get_orders():
+    orders = Order.query.all()
+    return jsonify([{
+        "id": o.id,
+        "user_id": o.user_id,
+        "status": o.status,
+        "created_at": o.created_at.isoformat(),
+        "items": [{
+            "id": i.id,
+            "listing_id": i.listing_id,
+            "quantity": i.quantity
+        } for i in o.items]
+    } for o in orders])
+
+
+# --------------------
+# GET single order
+# --------------------
+@orders_bp.route("/<int:order_id>", methods=["GET"])
+def get_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    return jsonify({
+        "id": order.id,
+        "user_id": order.user_id,
+        "status": order.status,
+        "created_at": order.created_at.isoformat(),
+        "items": [{
+            "id": i.id,
+            "listing_id": i.listing_id,
+            "quantity": i.quantity
+        } for i in order.items]
+    })
+
+
+# --------------------
+# CREATE new order
+# --------------------
+@orders_bp.route("/", methods=["POST"])
+def create_order():
     data = request.get_json()
-    if not data:
-        return jsonify({"error": "Invalid request body."}), 400
+    user_id = data.get("user_id")
+    items_data = data.get("items", [])
 
-    # Extract data from the payload sent by the frontend
-    shipping_address = data.get('shipping_address')
-    order_details = data.get('order_details')
-    total_price = data.get('total_price')
+    # Create order
+    new_order = Order(user_id=user_id, status="pending")
+    db.session.add(new_order)
+    db.session.flush()  # ensures new_order.id is available
 
-    if not all([shipping_address, order_details, total_price]):
-        return jsonify({"error": "Missing required order information."}), 400
+    # Add items
+    for item in items_data:
+        listing = Listing.query.get(item["listing_id"])
+        if not listing:
+            return jsonify({"error": f"Listing {item['listing_id']} not found"}), 404
 
-    try:
-        # Prepare parameters for the RPC call
-        # We can securely pass the user.id because the @auth_required decorator has validated it.
-        params = {
-            "user_id_in": user.id,
-            "total_price_in": total_price,
-            "shipping_address_in": shipping_address,
-            "order_details_in": order_details
-        }
+        order_item = OrderItem(
+            order_id=new_order.id,
+            listing_id=listing.id,
+            quantity=item.get("quantity", 1)
+        )
+        db.session.add(order_item)
 
-        # Call the RPC function using the ADMIN client.
-        # The endpoint is already protected by @auth_required, so we know the user is valid.
-        # Using the admin client guarantees we have permission to EXECUTE the SECURITY DEFINER function.
-        response = supabase_admin.rpc('create_order_for_user', params).execute()
-        return jsonify(response.data[0]), 201
-    except Exception as e:
-        current_app.logger.error(f"Error creating order for user {user.id}: {e}", exc_info=True)
-        return jsonify({"error": "An unexpected error occurred while placing your order."}), 500
+    db.session.commit()
+    return jsonify({"message": "Order created", "id": new_order.id}), 201
 
-@orders_api_bp.route('/me/orders', methods=['GET'])
-@auth_required
-def get_my_orders(user):
-    """
-    Fetches all orders for the currently authenticated user.
-    """
-    try:
-        # Call the secure SECURITY DEFINER RPC, passing the validated user's ID.
-        # We use the standard `supabase` client here, as the function itself has elevated privileges.
-        params = {"user_id_in": user.id}
-        response = supabase.rpc('get_orders_for_user', params).execute()
-        return jsonify(response.data), 200
-    except Exception as e:
-        current_app.logger.error(f"Error fetching orders for user {user.id}: {e}", exc_info=True)
-        return jsonify({"error": "An unexpected error occurred while fetching your orders."}), 500
+
+# --------------------
+# UPDATE order status
+# --------------------
+@orders_bp.route("/<int:order_id>", methods=["PUT"])
+def update_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    data = request.get_json()
+
+    order.status = data.get("status", order.status)
+    db.session.commit()
+    return jsonify({"message": "Order updated"})
+
+
+# --------------------
+# DELETE order
+# --------------------
+@orders_bp.route("/<int:order_id>", methods=["DELETE"])
+def delete_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    db.session.delete(order)
+    db.session.commit()
+    return jsonify({"message": "Order deleted"})
