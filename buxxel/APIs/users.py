@@ -59,6 +59,7 @@ def register():
 
     # GET request → just render the form
     return render_template("register.html")
+
 # --------------------
 # USER LOGOUT
 # --------------------
@@ -68,3 +69,27 @@ def logout():
     logout_user()
     flash("You have been logged out.", "info")
     return redirect(url_for("main.index"))
+
+# --------------------
+# FORGOT PASSWORD
+# --------------------
+@users_bp.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+    if request.method == "POST":
+        email = request.form.get("email")
+
+        if not email:
+            flash("Please enter your email address.", "danger")
+            return redirect(url_for("users_bp.reset_password"))
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # TODO: generate token + send email with reset link
+            flash("Password reset instructions have been sent to your email.", "success")
+        else:
+            flash("No account found with that email address.", "warning")
+
+        return redirect(url_for("users_bp.reset_password"))
+
+    # GET request → show the form
+    return render_template("reset_password.html")
