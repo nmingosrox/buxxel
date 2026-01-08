@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
-from flask_login import login_user
+from flask_login import login_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from buxxel.models import User
 from buxxel.extensions import db
