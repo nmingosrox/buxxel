@@ -15,41 +15,59 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-    # Set password (hash before saving)
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    # Verify password
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 # --------------------
-# Listing Model
+# Listing Base (real table, polymorphic)
 # --------------------
-class BaseListing(db.Model):
-    __abstract__ = True   # not a real table, just a base
+class Listing(db.Model):
+    __tablename__ = "listings"
 
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))  # 'product' or 'service'
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
-class Product(BaseListing):
+    __mapper_args__ = {
+        "polymorphic_on": type,
+        "polymorphic_identity": "listing"
+    }
+
+
+class Product(Listing):
     __tablename__ = "products"
 
+    id = db.Column(db.Integer, db.ForeignKey("listings.id"), primary_key=True)
     stock = db.Column(db.Integer, nullable=False, default=0)
-    sku = db.Column(db.String(50), unique=True)  # optional product code
-    weight = db.Column(db.Float)                 # shipping weight
-    dimensions = db.Column(db.String(100))       # e.g. "10x20x5 cm"
+    sku = db.Column(db.String(50), unique=True)
+    weight = db.Column(db.Float)
+    dimensions = db.Column(db.String(100))
 
-class Service(BaseListing):
+    __mapper_args__ = {
+        "polymorphic_identity": "product"
+    }
+
+
+class Service(Listing):
     __tablename__ = "services"
 
-    duration = db.Column(db.Integer)             # e.g. hours or days
-    location = db.Column(db.String(120))         # optional: where service is delivered
-    availability = db.Column(db.String(50))      # e.g. "weekdays", "weekends"
+    id = db.Column(db.Integer, db.ForeignKey("listings.id"), primary_key=True)
+    duration = db.Column(db.Integer)
+    location = db.Column(db.String(120))
+    availability = db.Column(db.String(50))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "service"
+    }
+
 
 # --------------------
 # Order Model
@@ -78,6 +96,8 @@ class OrderItem(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
     listing_id = db.Column(db.Integer, db.ForeignKey("listings.id"), nullable=False)
     quantity = db.Column(db.Integer, default=1)
+
+    listing = db.relationship("Listing", backref="order_items")
 
     def __repr__(self):
         return f"<OrderItem {self.id} - Qty {self.quantity}>"
