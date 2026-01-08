@@ -43,11 +43,11 @@ def create_app(config_class=DevelopmentConfig):
     admin.add_view(SecureModelView(Order, db.session))
 
     # Register context processors
-    #@app.context_processor
-    #def inject_global_vars():
-        #"""Injects global variables into all templates."""
-        #return dict(
-            #uploadcare_public_key=app.config['UPLOADCARE_PUBLIC_KEY'],
-        #)
+    @app.context_processor
+    def inject_global_vars():
+        """Injects global variables into all templates."""
+        return dict(
+            uploadcare_public_key=app.config['UPLOADCARE_PUBLIC_KEY'],
+        )
 
     return app
