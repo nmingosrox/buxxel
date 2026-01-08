@@ -43,6 +43,12 @@ def create_app(config_class=DevelopmentConfig):
     admin.add_view(SecureModelView(Order, db.session))
 
     # Register context processors
+    ##############################
+    # Required: tell Flask-Login how to load a user from ID
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
     @app.context_processor
     def inject_global_vars():
         """Injects global variables into all templates."""
