@@ -20,7 +20,7 @@ def create_app(config_class=DevelopmentConfig):
     admin.init_app(app)
    
     #login view
-    login_manager.login_view = "users_bp.login_user_api"
+    login_manager.login_view = "users_bp.login"
 
     if not all([
       app.config.get('UPLOADCARE_PUBLIC_KEY'),
