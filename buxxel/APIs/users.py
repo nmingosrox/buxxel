@@ -30,26 +30,35 @@ def login():
 # --------------------
 @users_bp.route("/register", methods=["GET", "POST"])
 def register():
-    username = request.form.get("username")
-    email = request.form.get("email")
-    password = request.form.get("password")
+    if request.method == "POST":
+        username = request.form.get("username")
+        email = request.form.get("email")
+        password = request.form.get("password")
 
-    if User.query.filter_by(email=email).first():
-        flash("Email already registered, please login", "primary")
+        if not password:
+            flash("Password is required", "danger")
+            return redirect(url_for("main.index"))
+
+        # Check if email already exists
+        if User.query.filter_by(email=email).first():
+            flash("Email already registered, please login", "primary")
+            return redirect(url_for("main.index"))
+
+        # Create new user with hashed password
+        new_user = User(
+            username=username,
+            email=email,
+            password_hash=generate_password_hash(password)
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        login_user(new_user)
+        flash("Successfully registered", "success")
         return redirect(url_for("main.index"))
 
-    new_user = User(
-        username=username,
-        email=email,
-        password_hash=generate_password_hash(password)
-    )
-    db.session.add(new_user)
-    db.session.commit()
-
-    login_user(new_user)
-    flash("Successfully registered", "success")
-    return redirect(url_for("main.index"))
-
+    # GET request → just render the form
+    return render_template("register.html")
 # --------------------
 # USER LOGOUT
 # --------------------
