@@ -1,40 +1,63 @@
-<form method="post" class="p-4 border rounded shadow-sm bg-light">
-  <h2 class="mb-3">Login</h2>
+{# templates/login.html #}
+{% extends "layout.html" %}
 
-  <!-- Email field -->
-  <div class="mb-3">
-    <label for="email" class="form-label">Email address</label>
-    <input 
-      type="email" 
-      class="form-control" 
-      id="email" 
-      name="email" 
-      placeholder="Enter your email" 
-      required
-    >
-  </div>
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="mb-4 text-center">Login</h2>
+          <form method="post" action="{{ url_for('users_bp.login') }}">
+            <!-- Email field -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email" 
+                placeholder="Enter your email" 
+                required
+              >
+            </div>
 
-  <!-- Password field -->
-  <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
-    <input 
-      type="password" 
-      class="form-control" 
-      id="password" 
-      name="password" 
-      placeholder="Enter your password" 
-      required
-    >
-  </div>
+            <!-- Password field -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                name="password" 
+                placeholder="Enter your password" 
+                required
+              >
+            </div>
 
-  <!-- Remember me + Forgot password -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="remember" name="remember">
-      <label class="form-check-label" for="remember">Remember me</label>
+            <!-- Remember me + Forgot password -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                <label class="form-check-label" for="remember">Remember me</label>
+              </div>
+              <a href="{{ url_for('users_bp.reset_password') }}" class="small text-decoration-none">Forgot password?</a>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+
+            <!-- Register link -->
+            <p class="mt-3 text-center">
+              Don’t have an account? <a href="{{ url_for('users_bp.register') }}">Register here</a>
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
-    <a href="/users/reset-password" class="small text-decoration-none">Forgot password?</a>
   </div>
+</div>
+{% endblock %}  </div>
 
   <!-- Submit button -->
   <button type="submit" class="btn btn-primary w-100">Login</button>
