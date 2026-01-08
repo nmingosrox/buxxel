@@ -5,6 +5,10 @@ from flask_login import login_required, current_user
 
 main_bp = Blueprint("main", __name__)
 
+@main_bp.route("/test")
+def test():
+    return f"Authenticated? {current_user.is_authenticated}"
+
 # --------------------
 # Home / Landing Page
 # --------------------
