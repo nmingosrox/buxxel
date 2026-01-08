@@ -10,7 +10,7 @@ main_bp = Blueprint("main", __name__)
 # --------------------
 @main_bp.route("/")
 def index():
-    return render_template("index.html", current_user=current_user)
+    return render_template("index.html")
 
 # --------------------
 # Listings Page
