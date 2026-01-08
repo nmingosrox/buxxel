@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from buxxel import db
-from buxxel.models import Order, OrderItem, Listing, User
+from buxxel.models import User, Product, Service, Order
 from flask_login import login_required, current_user
 
 main_bp = Blueprint("main", __name__)
@@ -17,8 +17,9 @@ def index():
 # --------------------
 @main_bp.route("/listings")
 def listings():
-    listings = Listing.query.all()
-    return render_template("listings.html", listings=listings)
+    products = Product.query.all()
+    services = Service.query.all()
+    return render_template("listings.html", listings=[products, services])
 
 # --------------------
 # Shop Page

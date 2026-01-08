@@ -1,14 +1,32 @@
-from flask import Blueprint, request, jsonify, flash, redirect, url_for
-from buxxel import db
+from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from buxxel.models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 from buxxel.models import User
 from buxxel import db
 from werkzeug.security import check_password_hash, generate_password_hash
-from ..routes.main import main_bp
+from buxxel.extensions import db
 
 users_bp = Blueprint("users_bp", __name__, url_prefix="/users")
+
+@users_bp.route("/login", methods=["GET", "POST"])
+def login_view():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password(password):
+            login_user(user)
+
+            # Redirect based on role
+            if user.is_admin:
+                return redirect(url_for("admin.index"))
+            else:
+                return redirect(url_for("main.index"))  # or your shop homepage
+
+        flash("Invalid credentials")
+    return render_template("login.html")
 
 # --------------------
 # LOGIN user

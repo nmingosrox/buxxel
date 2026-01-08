@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import DevelopmentConfig
-from .extensions import db, login_manager, migrate
+from .extensions import db, login_manager, migrate, admin
 from dotenv import load_dotenv
 import os
+from buxxel.models import User, Product, Service, Order
+from buxxel.admin_views import SecureModelView, ListingAdminView
 
 load_dotenv()
 
@@ -15,7 +17,9 @@ def create_app(config_class=DevelopmentConfig):
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
-
+    admin.init_app(app)
+   
+    #login view
     login_manager.login_view = "users_bp.login_user"
 
     if not all([
@@ -28,15 +32,16 @@ def create_app(config_class=DevelopmentConfig):
    
     # Register blueprints
     from .routes.main import main_bp
-    from .APIs.listings import listings_bp
     from .APIs.users import users_bp
-    from .routes.admin import admin_bp
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(listings_bp)
-    app.register_blueprint(admin_bp)
     app.register_blueprint(users_bp)
-    
+   
+    #admin views
+    admin.add_view(SecureModelView(Product, db.session))
+    admin.add_view(SecureModelView(Service, db.session))
+    admin.add_view(SecureModelView(Order, db.session))
+
     # Register context processors
     @app.context_processor
     def inject_global_vars():
