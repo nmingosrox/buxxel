@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from buxxel.models import User
 from buxxel.extensions import db
@@ -7,7 +7,7 @@ from buxxel.extensions import db
 users_bp = Blueprint("users_bp", __name__, url_prefix="/users")
 
 # --------------------
-# USER LOGIN (form via homepage modal)
+# USER LOGIN
 # --------------------
 @users_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -19,9 +19,6 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             flash("Login successful", "success")
-            # Both admins and normal users go to homepage.
-            #the xheck for admin is done in the template
-            # Admins will see the admin link in the template.
             return redirect(url_for("main.index"))
 
         flash("Invalid credentials", "danger")
@@ -29,7 +26,7 @@ def login():
     return render_template("login.html")
 
 # --------------------
-# USER REGISTRATION (form via homepage modal)
+# USER REGISTRATION
 # --------------------
 @users_bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -37,12 +34,10 @@ def register():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    # Check if email already exists
     if User.query.filter_by(email=email).first():
         flash("Email already registered, please login", "primary")
         return redirect(url_for("main.index"))
 
-    # Create new user with hashed password
     new_user = User(
         username=username,
         email=email,
@@ -51,7 +46,16 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    # Log the new user in immediately
     login_user(new_user)
     flash("Successfully registered", "success")
+    return redirect(url_for("main.index"))
+
+# --------------------
+# USER LOGOUT
+# --------------------
+@users_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have been logged out.", "info")
     return redirect(url_for("main.index"))
