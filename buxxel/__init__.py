@@ -9,6 +9,11 @@ from buxxel.admin_views import SecureModelView, ListingAdminView
 
 load_dotenv()
 
+# Required: tell Flask-Login how to load a user from ID
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    
 def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__, instance_relative_config=True)
    
@@ -44,10 +49,6 @@ def create_app(config_class=DevelopmentConfig):
 
     # Register context processors
     ##############################
-    # Required: tell Flask-Login how to load a user from ID
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
 
     @app.context_processor
     def inject_global_vars():
