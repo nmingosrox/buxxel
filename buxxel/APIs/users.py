@@ -27,8 +27,6 @@ def login():
         flash("Invalid credentials", "danger")
         return redirect(url_for("main.index"))
 
-    return render_template("login.html")
-
 # --------------------
 # USER REGISTRATION (form via homepage modal)
 # --------------------
