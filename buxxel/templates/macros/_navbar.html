@@ -11,6 +11,15 @@
         <li class="nav-item"><a class="nav-link" href="{{ url_for('main.shop') }}">Shop</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ url_for('main.orders') }}">Orders</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ url_for('main.contact') }}">Contact</a></li>
+
+        {# Admin Panel link visible only to admins #}
+        {% if current_user.is_authenticated and current_user.isadmin %}
+          <li class="nav-item">
+            <a class="nav-link text-warning fw-bold" href="{{ url_for('admin.index') }}">
+              <i class="bi bi-shield-lock-fill"></i> Admin Panel
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
 
@@ -38,14 +47,24 @@
           </span>
         </a>
       </li>
-      <div id="auth-guest" class="d-flex">
-        <li class="nav-item me-2">
-          <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+
+      {% if current_user.is_authenticated %}
+        <li class="nav-item">
+          <span class="navbar-text text-light me-3">Hello, {{ current_user.username }}</span>
         </li>
         <li class="nav-item">
-          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+          <a class="btn btn-outline-light" href="{{ url_for('users_bp.logout') }}">Logout</a>
         </li>
-      </div>
+      {% else %}
+        <div id="auth-guest" class="d-flex">
+          <li class="nav-item me-2">
+            <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+          </li>
+        </div>
+      {% endif %}
     </ul>
   </div>
 </nav>
