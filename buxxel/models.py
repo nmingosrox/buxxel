@@ -29,7 +29,7 @@ class Listing(db.Model):
     __tablename__ = "listings"
 
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(50))  # 'product' or 'service'
+    type = db.Column(db.String(50), nullable=False)  # 'product' or 'service'
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
