@@ -82,8 +82,3 @@ class UserAdmin(SecureModelView):
     column_labels = {
         "is_admin": "Admin User",
     }
-
-
-# Register views with Flask-Admin
-admin.add_view(ListingAdminView(Listing, db.session))  # ✅ all listings handled here
-admin.add_view(UserAdmin(User, db.session))            # ✅ user management
