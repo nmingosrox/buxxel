@@ -11,8 +11,12 @@ from wtforms import PasswordField, StringField
 class SecureModelView(ModelView):
     """Base admin view that restricts access to admins only."""
 
+    # Inject Uploadcare widget script globally
+    extra_js = [
+        "https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"
+    ]
+
     def is_accessible(self):
-        # Only allow logged-in admins
         return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
@@ -20,8 +24,25 @@ class SecureModelView(ModelView):
         return redirect(url_for("users_bp.login"))
 
 
+class ListingImageInlineForm(ModelView):
+    """Inline form config for Uploadcare widget in ListingAdminView."""
+
+    form_overrides = {
+        "uploadcare_file": StringField
+    }
+
+    def scaffold_form(self):
+        form_class = super().scaffold_form()
+        form_class.uploadcare_file.widget.attrs.update({
+            "class": "uploadcare-uploader",
+            "data-public-key": current_app.config["UPLOADCARE_PUBLIC_KEY"],
+            "data-multiple": "true"
+        })
+        return form_class
+
+
 class ListingImageAdmin(SecureModelView):
-    """Admin view for individual listing images (Uploadcare integration)."""
+    """Standalone admin view for ListingImage (optional)."""
 
     column_list = ("id", "listing_id", "uploadcare_file")
     column_labels = {
@@ -29,27 +50,19 @@ class ListingImageAdmin(SecureModelView):
         "listing_id": "Listing",
     }
 
-    # Inject Uploadcare widget script globally
-    extra_js = [
-        "https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"
-    ]
-
-    # Use Uploadcare widget for uploads
     form_overrides = {
         "uploadcare_file": StringField
     }
 
     def scaffold_form(self):
-        """Attach Uploadcare widget attributes dynamically using config key."""
         form_class = super().scaffold_form()
         form_class.uploadcare_file.widget.attrs.update({
             "class": "uploadcare-uploader",
             "data-public-key": current_app.config["UPLOADCARE_PUBLIC_KEY"],
-            "data-multiple": "true"  # allow multiple uploads in one go
+            "data-multiple": "true"
         })
         return form_class
 
-    # Show thumbnail in admin list
     def _list_thumbnail(view, context, model, name):
         if not model.uploadcare_file:
             return ''
@@ -82,8 +95,8 @@ class ListingAdminView(SecureModelView):
 
     column_default_sort = ("created_at", True)
 
-    # Inline model for images
-    inline_models = (ListingImage,)
+    # Inline model for images with Uploadcare widget
+    inline_models = [(ListingImage, ListingImageInlineForm)]
 
 
 class UserAdmin(SecureModelView):
@@ -92,13 +105,11 @@ class UserAdmin(SecureModelView):
     column_list = ("id", "username", "email", "is_admin")
     form_excluded_columns = ("password_hash",)
 
-    # Add a custom form field for setting/resetting password
     form_extra_fields = {
         "password": PasswordField("Password")
     }
 
     def on_model_change(self, form, model, is_created):
-        """Hash password if provided in the admin form."""
         if form.password.data:
             model.password_hash = generate_password_hash(form.password.data)
 
