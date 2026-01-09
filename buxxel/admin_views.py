@@ -83,17 +83,18 @@ class ListingAdminView(SecureModelView):
 
     inline_models = [
         (ListingImage, {
-            'form_overrides': {'uploadcare_file': StringField},
-            'form_widget_args': {
-                'uploadcare_file': {
-                    'class': 'uploadcare-uploader',
-                    'data-public-key': 'PLACEHOLDER_KEY',  # placeholder only
-                    'data-multiple': 'true',
-                    'data-tabs': 'file'
-                }
+        'form_overrides': {'uploadcare_file': StringField},
+        'form_widget_args': {
+            'uploadcare_file': {
+                'role': 'uploadcare-uploader',   # NEW
+                'class': 'uploadcare-uploader',
+                'data-public-key': 'PLACEHOLDER_KEY',
+                'data-multiple': 'true',
+                'data-tabs': 'file'
             }
-        })
-    ]
+        }
+    })
+]
 
     def scaffold_form(self):
         """Inject Uploadcare key at runtime inside app context."""
