@@ -38,12 +38,14 @@ class ListingImageAdmin(SecureModelView):
     }
 
     def scaffold_form(self):
+        """Attach Uploadcare widget attributes dynamically using config key."""
         form_class = super().scaffold_form()
-        form_class.uploadcare_file.widget.attrs.update({
-            "class": "uploadcare-uploader",
-            "data-public-key": current_app.config["UPLOADCARE_PUBLIC_KEY"],
-            "data-multiple": "true"
-        })
+        if hasattr(form_class, "uploadcare_file"):
+            form_class.uploadcare_file.widget.attrs.update({
+                "class": "uploadcare-uploader",
+                "data-public-key": current_app.config.get("UPLOADCARE_PUBLIC_KEY", ""),
+                "data-multiple": "true"
+            })
         return form_class
 
     def _list_thumbnail(view, context, model, name):
@@ -79,16 +81,26 @@ class ListingAdminView(SecureModelView):
     column_default_sort = ("created_at", True)
 
     # Inline model for images with Uploadcare widget
-    inline_models = [(ListingImage, {
-        'form_overrides': {'uploadcare_file': StringField},
-        'form_widget_args': {
-            'uploadcare_file': {
-                'class': 'uploadcare-uploader',
-                'data-public-key': current_app.config["UPLOADCARE_PUBLIC_KEY"],
-                'data-multiple': 'true'
+    inline_models = [
+        (ListingImage, {
+            'form_overrides': {'uploadcare_file': StringField},
+            'form_widget_args': {
+                'uploadcare_file': {
+                    'class': 'uploadcare-uploader',
+                    'data-public-key': 'PLACEHOLDER_KEY',  # replaced at runtime
+                    'data-multiple': 'true'
+                }
             }
-        }
-    })]
+        })
+    ]
+
+    def scaffold_form(self):
+        """Inject Uploadcare key at runtime inside app context."""
+        form_class = super().scaffold_form()
+        if hasattr(form_class, "uploadcare_file"):
+            form_class.uploadcare_file.widget.attrs['data-public-key'] = \
+                current_app.config.get("UPLOADCARE_PUBLIC_KEY", "")
+        return form_class
 
 
 class UserAdmin(SecureModelView):
