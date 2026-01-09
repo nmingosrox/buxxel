@@ -36,6 +36,9 @@ class Listing(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
+    # New field for image filename or URL
+    image = db.Column(db.String(255), nullable=True)
+
     __mapper_args__ = {
         "polymorphic_on": type,
         "polymorphic_identity": "listing"
