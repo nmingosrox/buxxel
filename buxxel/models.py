@@ -84,13 +84,13 @@ class ListingImage(db.Model):
     __tablename__ = "listing_images"
 
     id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(255), nullable=False)
+    # Store Uploadcare file UUID or CDN URL
+    uploadcare_file = db.Column(db.String(255), nullable=False)
     listing_id = db.Column(db.Integer, db.ForeignKey("listings.id"), nullable=False)
 
-    def __repr__(self):
-        return f"<ListingImage {self.id} - {self.filename}>"
-
-
+    def cdn_url(self):
+        """Return the Uploadcare CDN URL for this image."""
+        return f"https://ucarecdn.com/{self.uploadcare_file}/"
 # --------------------
 # Order Model
 # --------------------
