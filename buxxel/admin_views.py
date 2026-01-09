@@ -88,7 +88,7 @@ class ListingAdminView(SecureModelView):
             'form_widget_args': {
                 'uploadcare_file': {
                     'class': 'uploadcare-uploader',
-                    'data-public-key': 'PLACEHOLDER_KEY',  # replaced at runtime
+                    "data-public-key": current_app.config.get("UPLOADCARE_PUBLIC_KEY", ""),  # replaced at runtime
                     'data-multiple': 'true',
                     'data-tabs': 'file'  # restrict to local file uploads only
                 }
