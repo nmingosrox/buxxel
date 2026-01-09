@@ -1,6 +1,6 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, current_app
 from buxxel.models import User, Listing, ListingImage
 from buxxel.extensions import db, admin
 from werkzeug.security import generate_password_hash
@@ -29,7 +29,7 @@ class ListingImageAdmin(SecureModelView):
         "listing_id": "Listing",
     }
 
-    # Inject Uploadcare widget script
+    # Inject Uploadcare widget script globally
     extra_js = [
         "https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"
     ]
@@ -39,13 +39,15 @@ class ListingImageAdmin(SecureModelView):
         "uploadcare_file": StringField
     }
 
-    form_widget_args = {
-        "uploadcare_file": {
+    def scaffold_form(self):
+        """Attach Uploadcare widget attributes dynamically using config key."""
+        form_class = super().scaffold_form()
+        form_class.uploadcare_file.widget.attrs.update({
             "class": "uploadcare-uploader",
-            "data-public-key": "YOUR_UPLOADCARE_PUBLIC_KEY",  # replace with your actual key
+            "data-public-key": current_app.config["UPLOADCARE_PUBLIC_KEY"],
             "data-multiple": "true"  # allow multiple uploads in one go
-        }
-    }
+        })
+        return form_class
 
     # Show thumbnail in admin list
     def _list_thumbnail(view, context, model, name):
