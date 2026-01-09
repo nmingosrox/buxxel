@@ -81,16 +81,15 @@ class ListingAdminView(SecureModelView):
 
     column_default_sort = ("created_at", True)
 
-    # Inline model for images with Uploadcare widget
     inline_models = [
         (ListingImage, {
             'form_overrides': {'uploadcare_file': StringField},
             'form_widget_args': {
                 'uploadcare_file': {
                     'class': 'uploadcare-uploader',
-                    'data-public-key': 'PLACEHOLDER_KEY',  # safe placeholder
+                    'data-public-key': 'PLACEHOLDER_KEY',  # placeholder only
                     'data-multiple': 'true',
-                    'data-tabs': 'file'  # restrict to local file uploads only
+                    'data-tabs': 'file'
                 }
             }
         })
@@ -100,8 +99,20 @@ class ListingAdminView(SecureModelView):
         """Inject Uploadcare key at runtime inside app context."""
         form_class = super().scaffold_form()
         if hasattr(form_class, "uploadcare_file"):
-            form_class.uploadcare_file.widget.attrs['data-public-key'] = \
+            form_class.uploadcare_file.widget.attrs['data-public-key'] = (
                 current_app.config.get("UPLOADCARE_PUBLIC_KEY", "")
+            )
+        return form_class
+
+    def scaffold_inline_form_models(self, form_class):
+        """Ensure inline models also get the real Uploadcare key."""
+        form_class = super().scaffold_inline_form_models(form_class)
+        for f in form_class.__dict__.values():
+            if hasattr(f, "widget") and hasattr(f.widget, "attrs"):
+                if "data-public-key" in f.widget.attrs:
+                    f.widget.attrs["data-public-key"] = (
+                        current_app.config.get("UPLOADCARE_PUBLIC_KEY", "")
+                    )
         return form_class
 
 
