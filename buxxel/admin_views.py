@@ -29,6 +29,11 @@ class ListingImageAdmin(SecureModelView):
         "listing_id": "Listing",
     }
 
+    # Inject Uploadcare widget script
+    extra_js = [
+        "https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"
+    ]
+
     # Use Uploadcare widget for uploads
     form_overrides = {
         "uploadcare_file": StringField
@@ -37,8 +42,8 @@ class ListingImageAdmin(SecureModelView):
     form_widget_args = {
         "uploadcare_file": {
             "class": "uploadcare-uploader",
-            "data-public-key": "YOUR_UPLOADCARE_PUBLIC_KEY",  # inject your key here
-            "data-multiple": "false"  # single per row, but multiple rows allowed
+            "data-public-key": "YOUR_UPLOADCARE_PUBLIC_KEY",  # replace with your actual key
+            "data-multiple": "true"  # allow multiple uploads in one go
         }
     }
 
