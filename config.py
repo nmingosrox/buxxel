@@ -3,7 +3,7 @@ class BaseConfig:
     SECRET_KEY = "super-secret-key"   # 🔑 replace with your actual secret
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOADCARE_PUBLIC_KEY = "82cfba4bb62588a9cda7"
-    UPLOADCARE_SECRET_KEY = "b1b36637bd80f173fcf2"
+    UPLOADCARE_SECRET_KEY = "73727d2461033aa0afdd"
 
 
 class DevelopmentConfig(BaseConfig):
