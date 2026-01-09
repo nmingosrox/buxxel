@@ -36,8 +36,13 @@ class Listing(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
-    # New field for image filename or URL
-    image = db.Column(db.String(255), nullable=True)
+    # Relationship to multiple images
+    images = db.relationship(
+        "ListingImage",
+        backref="listing",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
 
     __mapper_args__ = {
         "polymorphic_on": type,
@@ -70,6 +75,20 @@ class Service(Listing):
     __mapper_args__ = {
         "polymorphic_identity": "service"
     }
+
+
+# --------------------
+# ListingImage Model (NEW)
+# --------------------
+class ListingImage(db.Model):
+    __tablename__ = "listing_images"
+
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listings.id"), nullable=False)
+
+    def __repr__(self):
+        return f"<ListingImage {self.id} - {self.filename}>"
 
 
 # --------------------
