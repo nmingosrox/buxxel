@@ -44,7 +44,8 @@ class ListingImageAdmin(SecureModelView):
             form_class.uploadcare_file.widget.attrs.update({
                 "class": "uploadcare-uploader",
                 "data-public-key": current_app.config.get("UPLOADCARE_PUBLIC_KEY", ""),
-                "data-multiple": "true"
+                "data-multiple": "true",
+                "data-tabs": "file"  # restrict to local file uploads only
             })
         return form_class
 
@@ -88,7 +89,8 @@ class ListingAdminView(SecureModelView):
                 'uploadcare_file': {
                     'class': 'uploadcare-uploader',
                     'data-public-key': 'PLACEHOLDER_KEY',  # replaced at runtime
-                    'data-multiple': 'true'
+                    'data-multiple': 'true',
+                    'data-tabs': 'file'  # restrict to local file uploads only
                 }
             }
         })
