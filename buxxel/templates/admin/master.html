@@ -2,6 +2,15 @@
 
 {% block head %}
   {{ super() }}
-  <!-- Inject Uploadcare widget script globally -->
+  <!-- Uploadcare widget script -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+  <script>
+    // Force initialization of all Uploadcare inputs
+    document.addEventListener("DOMContentLoaded", function() {
+      var inputs = document.querySelectorAll("[role=uploadcare-uploader], .uploadcare-uploader");
+      inputs.forEach(function(input) {
+        uploadcare.Widget(input);
+      });
+    });
+  </script>
 {% endblock %}
