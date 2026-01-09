@@ -24,25 +24,8 @@ class SecureModelView(ModelView):
         return redirect(url_for("users_bp.login"))
 
 
-class ListingImageInlineForm(ModelView):
-    """Inline form config for Uploadcare widget in ListingAdminView."""
-
-    form_overrides = {
-        "uploadcare_file": StringField
-    }
-
-    def scaffold_form(self):
-        form_class = super().scaffold_form()
-        form_class.uploadcare_file.widget.attrs.update({
-            "class": "uploadcare-uploader",
-            "data-public-key": current_app.config["UPLOADCARE_PUBLIC_KEY"],
-            "data-multiple": "true"
-        })
-        return form_class
-
-
 class ListingImageAdmin(SecureModelView):
-    """Standalone admin view for ListingImage (optional)."""
+    """Standalone admin view for ListingImage (Uploadcare integration)."""
 
     column_list = ("id", "listing_id", "uploadcare_file")
     column_labels = {
@@ -96,7 +79,16 @@ class ListingAdminView(SecureModelView):
     column_default_sort = ("created_at", True)
 
     # Inline model for images with Uploadcare widget
-    inline_models = [(ListingImage, ListingImageInlineForm)]
+    inline_models = [(ListingImage, {
+        'form_overrides': {'uploadcare_file': StringField},
+        'form_widget_args': {
+            'uploadcare_file': {
+                'class': 'uploadcare-uploader',
+                'data-public-key': current_app.config["UPLOADCARE_PUBLIC_KEY"],
+                'data-multiple': 'true'
+            }
+        }
+    })]
 
 
 class UserAdmin(SecureModelView):
