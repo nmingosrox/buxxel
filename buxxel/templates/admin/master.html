@@ -5,20 +5,13 @@
   <!-- Uploadcare widget script -->
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Replace PLACEHOLDER_KEY with your actual key from config
-      var publicKey = "{{ current_app.config.get('UPLOADCARE_PUBLIC_KEY', '') }}";
-
-      // Find all uploadcare inputs
-      var inputs = document.querySelectorAll("[role=uploadcare-uploader], .uploadcare-uploader");
-
-      inputs.forEach(function(input) {
-        // Inject the real key
-        input.setAttribute("data-public-key", publicKey);
-
-        // Initialize the widget explicitly
-        uploadcare.Widget(input);
-      });
+  var publicKey = "{{ UPLOADCARE_PUBLIC_KEY }}";
+  document.addEventListener("DOMContentLoaded", function() {
+    var inputs = document.querySelectorAll("[role=uploadcare-uploader], .uploadcare-uploader");
+    inputs.forEach(function(input) {
+      input.setAttribute("data-public-key", publicKey);
+      uploadcare.Widget(input);
     });
-  </script>
+  });
+</script>
 {% endblock %}
