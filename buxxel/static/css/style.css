@@ -1,0 +1,23 @@
+.hero-slide {
+  /* Keeps content centered and responsive */
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-bg-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+}
+
+.hero-bg-accent {
+  background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+}
+
+.hero-bg-dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%);
+}
+
+.hero-section .btn {
+  border-radius: 8px;
+}
