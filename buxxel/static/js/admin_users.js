@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('/admin/api/users');
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(HTTP error! status: ${response.status});
             }
             const users = await response.json();
 
@@ -30,20 +30,21 @@ document.addEventListener('DOMContentLoaded', function () {
             <strong>Error:</strong> ${error.message}
         </td>
     </tr>`;
-}
+        }
+    }
 
     function createUserRow(user) {
         const row = document.createElement('tr');
 
         const roleBadge = user.role === 'admin'
-            ? `<span class="badge bg-danger">Admin</span>`
-            : `<span class="badge bg-secondary">User</span>`;
+            ? <span class="badge bg-danger">Admin</span>
+            : <span class="badge bg-secondary">User</span>;
 
         const joinedDate = new Date(user.created_at).toLocaleDateString();
 
         // Use textContent for safe data injection
         const idCell = row.insertCell();
-        idCell.textContent = `${user.user_id.substring(0, 8)}...`;
+        idCell.textContent = ${user.user_id.substring(0, 8)}...;
 
         const emailCell = row.insertCell();
         emailCell.textContent = user.email;
@@ -64,3 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial fetch
     fetchAndRenderUsers();
 });
+
+change this part (
+catch (error) {
+            console.error('Error fetching users:', error);
+)
