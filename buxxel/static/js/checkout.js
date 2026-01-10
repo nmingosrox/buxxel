@@ -8,10 +8,9 @@ $(document).ready(function() {
         itemList.empty(); // Clear loading state
 
         let totalItems = 0;
-        let totalPrice = 0; // Initialize total price
+        let totalPrice = 0;
 
         if (Object.keys(cart).length === 0) {
-            // If cart is empty, redirect to home page as there's nothing to check out.
             window.location.href = '/';
             return;
         }
@@ -30,11 +29,9 @@ $(document).ready(function() {
                 </li>
             `;
             itemList.append(itemHtml);
-            // Calculate total price inside the loop
             totalPrice += item.price * item.quantity;
         }
 
-        // Add the total price to the list
         const totalHtml = `
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total (NAD)</span>
@@ -46,11 +43,68 @@ $(document).ready(function() {
         countBadge.text(totalItems);
     }
 
+    // Show payment instructions dynamically
+    function setupPaymentInstructions() {
+        const paymentOptions = $('input[name="paymentMethod"]');
+        const instructionsBox = $('<div>', {
+            id: 'payment-instructions',
+            class: 'alert alert-info mt-3'
+        });
+        $('#checkout-form').append(instructionsBox);
+
+        paymentOptions.on('change', function() {
+            let instructions = '';
+            switch (this.id) {
+                case 'eft':
+                    instructions = `
+                        <strong>EFT Instructions:</strong><br>
+                        Bank: First National Bank Namibia<br>
+                        Account: 123456789<br>
+                        Branch Code: 280172<br>
+                        Use your Order ID as reference.
+                    `;
+                    break;
+                case 'ewallet':
+                    instructions = `
+                        <strong>Ewallet Instructions:</strong><br>
+                        Send via MTC Ewallet to:<br>
+                        Phone: +264 81 234 5678<br>
+                        Reference: Your Order ID.
+                    `;
+                    break;
+                case 'paypulse':
+                    instructions = `
+                        <strong>PayPulse Instructions:</strong><br>
+                        Merchant number:<br>
+                        +264 85 987 6543<br>
+                        Reference: Your Order ID.
+                    `;
+                    break;
+                case 'bluewallet':
+                    instructions = `
+                        <strong>BlueWallet Instructions:</strong><br>
+                        Wallet ID: BUXXEL123<br>
+                        Reference: Your Order ID.
+                    `;
+                    break;
+                case 'banktransfer':
+                    instructions = `
+                        <strong>Bank Transfer Instructions:</strong><br>
+                        Bank: Bank Windhoek<br>
+                        Account: 987654321<br>
+                        Branch Code: 481972<br>
+                        Reference: Your Order ID.
+                    `;
+                    break;
+            }
+            instructionsBox.html(instructions);
+        });
+    }
+
     // Handle the form submission
     $('#checkout-form').on('submit', async function(e) {
         e.preventDefault();
 
-        // Basic form validation check
         if (this.checkValidity() === false) {
             e.stopPropagation();
             $(this).addClass('was-validated');
@@ -61,25 +115,24 @@ $(document).ready(function() {
         const submitBtn = $('#complete-purchase-btn');
         submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Placing Order...');
 
-        // Calculate total price from the cart to ensure accuracy
         let totalPrice = 0;
         for (const id in cart) {
             totalPrice += cart[id].price * cart[id].quantity;
         }
 
-        // Prepare the payload for the backend
         const payload = {
             shipping_address: {
                 fullName: $('#fullName').val(),
                 email: $('#email').val(),
                 address: $('#address').val(),
                 address2: $('#address2').val(),
-                country: $('#country-hidden').val(), // Use hidden input for disabled select
+                country: $('#country-hidden').val(),
                 region: $('#region').val(),
                 zip: $('#zip').val()
             },
             order_details: cart,
-            total_price: totalPrice
+            total_price: totalPrice,
+            payment_method: $('input[name="paymentMethod"]:checked').attr('id') // capture selected payment method
         };
 
         try {
@@ -103,9 +156,7 @@ $(document).ready(function() {
                 throw new Error(errorData.error || 'Failed to place order.');
             }
 
-            // Clear the cart from localStorage
             localStorage.removeItem('buxxelCart');
-            // Redirect to a success page
             window.location.href = '/order-success';
         } catch (error) {
             console.error("Order submission error:", error);
@@ -114,6 +165,7 @@ $(document).ready(function() {
         }
     });
 
-    // Initial population of the checkout summary
+    // Initialize
     populateCheckoutSummary();
+    setupPaymentInstructions();
 });
