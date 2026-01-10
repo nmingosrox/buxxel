@@ -23,11 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         } catch (error) {
-            console.error('Error fetching users:', error);
-            loadingSpinner.style.display = 'none';
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Failed to load users. Please try again later.</td></tr>`;
-        }
-    }
+    loadingSpinner.style.display = 'none';
+    tableBody.innerHTML = `<tr>
+        <td colspan="5" class="text-center text-danger">
+            Failed to load users.<br>
+            <strong>Error:</strong> ${error.message}
+        </td>
+    </tr>`;
+}
 
     function createUserRow(user) {
         const row = document.createElement('tr');
