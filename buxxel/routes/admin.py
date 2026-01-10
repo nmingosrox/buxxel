@@ -39,7 +39,7 @@ def api_get_users(user):
     """API endpoint to get all users."""
     try:
         # Fetches users from the 'profiles' table which should contain roles
-        response = supabase_admin.table('profiles').select('user_id, email, role, created_at').execute()
+        response = supabase_admin.table('profiles').select('id, email, user_role, created_at').execute()
         if response.data:
             return jsonify(response.data)
         return jsonify([])
