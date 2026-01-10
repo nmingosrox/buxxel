@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container my-5">
     <h2>Checkout</h2>
-    <p class="lead">Please review your order and provide payment information.</p>
+    <p class="lead">Review your order and provide shipping and payment details.</p>
 
     <div class="row g-5">
         <!-- Order Summary -->
@@ -24,36 +24,36 @@
 
         <!-- Order Form -->
         <div class="col-md-7 col-lg-8">
-            <h4 class="mb-3">Shipping address</h4>
+            <h4 class="mb-3">Shipping Information</h4>
             <form class="needs-validation" id="checkout-form" novalidate>
                 <div class="row g-3">
                     <div class="col-12">
-                        <label for="fullName" class="form-label">Full name</label>
-                        <input type="text" class="form-control" id="fullName" placeholder="John M. Doe" required>
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Marcus De Klerk" required>
                         <div class="invalid-feedback">
-                            Valid full name is required.
+                            A valid full name is required.
                         </div>
                     </div>
 
                     <div class="col-12">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                        <input type="email" class="form-control" id="email" placeholder="marcus.deklerk@business.com" required>
                         <div class="invalid-feedback">
-                            Please enter a valid email address for shipping updates.
+                            Please enter a valid email address for updates.
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="1234 Main St" required>
+                        <label for="address" class="form-label">Delivery Location 1</label>
+                        <input type="text" class="form-control" id="address" placeholder="Warehouse, Shop, or Office" required>
                         <div class="invalid-feedback">
-                            Please enter your shipping address.
+                            Please enter your primary delivery location.
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <label for="address2" class="form-label">Address 2 <span class="text-muted">(Optional)</span></label>
-                        <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
+                        <label for="address2" class="form-label">Delivery Location 2 <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control" id="address2" placeholder="Secondary branch or pickup point">
                     </div>
 
                     <div class="col-md-5">
@@ -93,7 +93,7 @@
 
                     <div class="col-md-3">
                         <label for="zip" class="form-label">Postal Code</label>
-                        <input type="text" class="form-control" id="zip" placeholder="" required>
+                        <input type="text" class="form-control" id="zip" placeholder="9000" required>
                         <div class="invalid-feedback">
                             Postal code required.
                         </div>
@@ -101,6 +101,32 @@
                 </div>
 
                 <hr class="my-4">
+
+                <!-- Payment Methods -->
+                <h4 class="mb-3">Payment Method</h4>
+                <div class="my-3">
+                    <div class="form-check">
+                        <input id="eft" name="paymentMethod" type="radio" class="form-check-input" required>
+                        <label class="form-check-label" for="eft">EFT (Electronic Funds Transfer)</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="ewallet" name="paymentMethod" type="radio" class="form-check-input" required>
+                        <label class="form-check-label" for="ewallet">Ewallet</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="paypulse" name="paymentMethod" type="radio" class="form-check-input" required>
+                        <label class="form-check-label" for="paypulse">PayPulse</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="bluewallet" name="paymentMethod" type="radio" class="form-check-input" required>
+                        <label class="form-check-label" for="bluewallet">BlueWallet</label>
+                    </div>
+                    <div class="form-check">
+                        <input id="banktransfer" name="paymentMethod" type="radio" class="form-check-input" required>
+                        <label class="form-check-label" for="banktransfer">Bank Transfer</label>
+                    </div>
+                </div>
+
                 <p class="text-muted">This is a demo. No real payment will be processed.</p>
                 <button class="w-100 btn btn-primary btn-lg" type="submit" id="complete-purchase-btn">Place Order</button>
             </form>
