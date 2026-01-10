@@ -82,19 +82,21 @@ class ListingAdminView(SecureModelView):
     column_default_sort = ("created_at", True)
 
     inline_models = [
-        (ListingImage, {
+    (ListingImage, {
         'form_overrides': {'uploadcare_file': StringField},
         'form_widget_args': {
             'uploadcare_file': {
-                'role': 'uploadcare-uploader',   # NEW
+                'id': 'uploadcare_file',
+                'name': 'uploadcare_file',
+                'type': 'text',
                 'class': 'uploadcare-uploader',
-                'data-public-key': 'PLACEHOLDER_KEY',
+                'data-public-key': 'PLACEHOLDER_KEY',  # leave as placeholder
                 'data-multiple': 'true',
                 'data-tabs': 'file'
             }
         }
     })
-]
+    ]
 
     def scaffold_form(self):
         """Inject Uploadcare key at runtime inside app context."""
