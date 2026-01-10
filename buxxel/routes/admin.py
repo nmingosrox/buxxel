@@ -36,17 +36,16 @@ def manage_listings(user):
 @admin_bp.route('/api/users')
 @admin_required
 def api_get_users(user):
-    """API endpoint to get all users."""
+    """API endpoint to get all users via RPC."""
     try:
-        # Fetches users from the 'profiles' table which should contain roles
-        response = supabase_admin.table('profiles').select('id, username, user_role, created_at').execute()
+        # Call the RPC function instead of direct table select
+        response = supabase_admin.rpc("get_all_users", {}).execute()
         if response.data:
             return jsonify(response.data)
         return jsonify([])
     except Exception as e:
-        print(f"Error fetching users: {e}")
+        print(f"Error fetching users via RPC: {e}")
         return jsonify({"error": "Failed to fetch users"}), 500
-
 @admin_bp.route('/api/listings')
 @admin_required
 def api_get_listings(user):
