@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, current_app 
 from config import DevelopmentConfig
 from .extensions import db, login_manager, migrate, admin
 from dotenv import load_dotenv
