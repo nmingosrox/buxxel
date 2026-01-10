@@ -34,39 +34,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createUserRow(user) {
-        const row = document.createElement('tr');
+    const row = document.createElement('tr');
 
-        const roleBadge = user.role === 'admin'
-            ? <span class="badge bg-danger">Admin</span>
-            : <span class="badge bg-secondary">User</span>;
+    const roleBadge = user.user_role === 'admin'
+        ? `<span class="badge bg-danger">Admin</span>`
+        : `<span class="badge bg-secondary">User</span>`;
 
-        const joinedDate = new Date(user.created_at).toLocaleDateString();
+    const joinedDate = new Date(user.created_at).toLocaleDateString();
 
-        // Use textContent for safe data injection
-        const idCell = row.insertCell();
-        idCell.textContent = ${user.user_id.substring(0, 8)}...;
+    // Use textContent for safe data injection
+    const idCell = row.insertCell();
+    idCell.textContent = `${user.id.substring(0, 8)}...`;
 
-        const emailCell = row.insertCell();
-        emailCell.textContent = user.email;
+    const usernameCell = row.insertCell();
+    usernameCell.textContent = user.username;
 
-        const roleCell = row.insertCell();
-        roleCell.innerHTML = roleBadge;
+    const roleCell = row.insertCell();
+    roleCell.innerHTML = roleBadge;
 
-        const joinedCell = row.insertCell();
-        joinedCell.textContent = joinedDate;
+    const joinedCell = row.insertCell();
+    joinedCell.textContent = joinedDate;
 
-        const actionsCell = row.insertCell();
-        actionsCell.innerHTML = `<button class="btn btn-sm btn-outline-primary" title="Edit Role"><i class="bi bi-person-badge"></i></button>
-                                 <button class="btn btn-sm btn-outline-danger" title="Delete User"><i class="bi bi-trash-fill"></i></button>`;
+    const actionsCell = row.insertCell();
+    actionsCell.innerHTML = `<button class="btn btn-sm btn-outline-primary" title="Edit Role"><i class="bi bi-person-badge"></i></button>
+                             <button class="btn btn-sm btn-outline-danger" title="Delete User"><i class="bi bi-trash-fill"></i></button>`;
 
-        return row;
+    return row;
     }
-
-    // Initial fetch
-    fetchAndRenderUsers();
-});
-
-change this part (
-catch (error) {
-            console.error('Error fetching users:', error);
-)
