@@ -55,10 +55,9 @@ def create_app(config_class=DevelopmentConfig):
 
     # Register context processors
     @app.context_processor
-    def inject_global_vars():
-        """Injects global variables into all templates."""
-        return dict(
-            uploadcare_public_key=app.config["UPLOADCARE_PUBLIC_KEY"],
-        )
+    def inject_uploadcare_key():
+        return {
+            "UPLOADCARE_PUBLIC_KEY": current_app.config.get("UPLOADCARE_PUBLIC_KEY", "")
+        }
 
     return app
