@@ -173,19 +173,26 @@
         </div>
     </div>
 
-    <!-- Image Preview Modal -->
-    <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content bg-transparent border-0" style="box-shadow: none;">
-                <div class="modal-body p-0 position-relative">
-                    <img src="" id="imagePreviewSrc" class="img-fluid w-100" alt="Listing Preview">
-                    <div id="imagePreviewDescription" class="position-absolute bottom-0 start-0 w-100 p-3" style="background-color: rgba(0, 0, 0, 0.7); color: white;">
-                        <!-- Description will be injected here -->
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Listing Preview Modal -->
+<div class="modal fade" id="listingPreviewModal" tabindex="-1" aria-labelledby="listingPreviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="listingPreviewTitle" class="modal-title">Listing Title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Image -->
+        <img src="" id="listingPreviewImage" class="img-fluid mb-3" alt="Listing Preview">
+
+        <!-- Details -->
+        <ul id="listingPreviewDetails" class="list-unstyled">
+          <!-- Bullet points injected here -->
+        </ul>
+      </div>
     </div>
+  </div>
+</div>
 
     <!-- Contact Purveyor Modal (Placeholder) -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
