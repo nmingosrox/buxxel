@@ -22,17 +22,23 @@ def get_paged_listings():
         
         response = supabase.rpc('get_public_listings_paged', params).execute()
 
-        # The RPC function doesn't join profiles, so we'll have to do that here if needed,
-        # or modify the RPC. For now, let's return the listings.
         if response.data:
-            listings = [item['listing'] for item in response.data]
-            total_listings = response.data[0]['total_count']
+            # response.data is already a list of listing objects
+            listings = response.data
+            # Use total_count if provided, otherwise fallback to length
+            total_listings = response.data[0].get('total_count', len(response.data))
             has_next = (page * per_page) < total_listings
         else:
             listings = []
             has_next = False
 
-        return jsonify({"listings": listings, "pagination": {"page": page, "has_next": has_next}}), 200
+        return jsonify({
+            "listings": listings,
+            "pagination": {
+                "page": page,
+                "has_next": has_next
+            }
+        }), 200
     except APIError as e:
         current_app.logger.error(f"Supabase API Error fetching paged listings: {e.json()}")
         return jsonify({"error": "Failed to load listings due to a database error."}), 500
