@@ -4,17 +4,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    """Base configuration shared across environments."""
+    """Base configuration."""
+    # The SECRET_KEY is crucial for session security and should be a long,
+    # random string set in the environment. It should NOT have a default value.
+    # Generate one with: python -c 'import secrets; print(secrets.token_hex(16))'
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # Server-side admin access
-    SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")        # Client-side browser access
+    SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # For server-side admin access
+    SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")        # For client-side browser access
 
     UPLOADCARE_PUBLIC_KEY = os.environ.get("UPLOADCARE_PUBLIC_KEY")
     UPLOADCARE_SECRET_KEY = os.environ.get("UPLOADCARE_SECRET_KEY")
 
     COMMISSION_RATE = 0.10
+
+    # Environment toggle (development, production, etc.)
+    FLASK_ENV = os.environ.get("FLASK_ENV", "development")
 
 
 class DevelopmentConfig(Config):
