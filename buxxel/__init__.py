@@ -20,22 +20,18 @@ def create_app(config_class=Config):
         raise ValueError("All required credentials must be set in the environment or config.")
 
     # Register blueprints
-    from .routes.main import main_bp
-    from .routes.dashboard import dashboard_bp
+    from buxxel.routes import all_page_blueprints
     from .APIs.listings import listings_api_bp
     from .APIs.profiles import profiles_api_bp
-    from .routes.checkout import checkout_bp
-    from .routes.admin import admin_bp
     from .APIs.admin_orders import admin_orders_api_bp
     from .APIs.orders import orders_api_bp
     from .APIs.admin_api import admin_api_bp
-    
-    app.register_blueprint(main_bp)
-    app.register_blueprint(dashboard_bp)
+
+    # register all page blueprints
+    for bp in all_page_blueprints:
+        app.register_blueprint(bp)
     app.register_blueprint(listings_api_bp)
     app.register_blueprint(profiles_api_bp)
-    app.register_blueprint(checkout_bp)
-    app.register_blueprint(admin_bp)
     app.register_blueprint(admin_api_bp)
     app.register_blueprint(admin_orders_api_bp)
     app.register_blueprint(orders_api_bp)
