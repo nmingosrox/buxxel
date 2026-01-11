@@ -28,13 +28,15 @@ def create_app(config_class=Config):
     from .routes.admin import admin_bp
     from .APIs.admin_orders import admin_orders_api_bp
     from .APIs.orders import orders_api_bp
-
+    from .APIs.admin_api import admin_api_bp
+    
     app.register_blueprint(main_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(listings_api_bp)
     app.register_blueprint(profiles_api_bp)
     app.register_blueprint(checkout_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(admin_api_bp)
     app.register_blueprint(admin_orders_api_bp)
     app.register_blueprint(orders_api_bp)
 
