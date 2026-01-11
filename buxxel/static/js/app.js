@@ -259,28 +259,32 @@ $(document).ready(function() {
                         </a>
                     `;
                     const productCardHtml = `
-                        <div class="col-lg-3 col-md-4 col-sm-6 listing-card" 
-                             data-tags="${(listing.tags || []).join(',')}" 
-                             data-name="${listing.name.toLowerCase()}"
-                             data-description="${escape(listing.description)}">
-                            <div class="card h-100 shadow-sm">
-                                ${imageHtml}
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">${listing.name}</h5>
-                                    <p class="card-text fw-bold fs-5 mb-3">N$${listing.price.toFixed(2)}</p>
-                                    <div class="mt-auto d-grid">
-                                        <button class="btn btn-warning add-to-cart-btn"
-                                                data-id="${listing.id}"
-                                                data-name="${listing.name}"
-                                                data-price="${listing.price}">
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                    $('#listing-grid').append(productCardHtml);
-                    });
+    <div class="col-lg-3 col-md-4 col-sm-6 listing-card" 
+         data-tags="${(listing.tags || []).join(',')}" 
+         data-name="${listing.name.toLowerCase()}"
+         data-title="${listing.name}"
+         data-description="${escape(listing.description)}"
+         data-image="${imageUrl}"
+         data-price="${listing.price}">
+        <div class="card h-100 shadow-sm">
+            <a href="#" class="listing-preview-trigger" data-bs-toggle="modal" data-bs-target="#listingPreviewModal">
+                <img src="${imageUrl}" class="card-img-top" alt="${listing.name}">
+            </a>
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">${listing.name}</h5>
+                <p class="card-text fw-bold fs-5 mb-3">N$${listing.price.toFixed(2)}</p>
+                <div class="mt-auto d-grid">
+                    <button class="btn btn-warning add-to-cart-btn"
+                            data-id="${listing.id}"
+                            data-name="${listing.name}"
+                            data-price="${listing.price}">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+$('#listing-grid').append(productCardHtml);
                 } else if (isNewFilter) {
                     // If it was a new filter and no results came back, show a message.
                     $('#listing-grid').html('<div class="text-center p-5 col-12"><h4 class="text-muted">No listings match your filters.</h4></div>');
@@ -591,18 +595,34 @@ $(document).ready(function() {
     // Load user's general location
     loadUserLocation();
 
-    // --- IMAGE PREVIEW MODAL HANDLER ---
+    // --- LISTING PREVIEW MODAL HANDLER ---
     // Use event delegation on the body to catch clicks from any listing card on any page
-    $('body').on('click', '.image-preview-trigger', function(e) {
-        e.preventDefault();
-        const imageUrl = $(this).data('image-url');
-        // Find the parent listing card and get its description data
-        const description = unescape($(this).closest('.listing-card').data('description') || '');
+    $('body').on('click', '.listing-preview-trigger', function(e) {
+    e.preventDefault();
+    const $card = $(this).closest('.listing-card');
 
-        if (imageUrl) {
-            $('#imagePreviewSrc').attr('src', imageUrl);
-        }
-        // Set the description text in the modal footer
-        $('#imagePreviewDescription').text(description);
+    const title = $card.data('title') || 'Untitled Listing';
+    const imageUrl = $card.data('image') || 'https://via.placeholder.com/300x200.png?text=No+Image';
+    const price = $card.data('price');
+    const descriptionRaw = unescape($card.data('description') || '');
+
+    // Set modal content
+    $('#listingPreviewTitle').text(title);
+    $('#listingPreviewImage').attr('src', imageUrl);
+
+    const $detailsList = $('#listingPreviewDetails');
+    $detailsList.empty();
+
+    // Add price as first bullet
+    if (price) {
+        $detailsList.append(`<li><strong>Price:</strong> N$${parseFloat(price).toFixed(2)}</li>`);
+    }
+
+    // Split description into bullet points (semicolon-separated)
+    descriptionRaw.split(';').map(item => item.trim()).filter(Boolean).forEach(detail => {
+        $detailsList.append(`<li>${detail}</li>`);
     });
+
+    $('#listingPreviewModal').modal('show');
+});
 });
