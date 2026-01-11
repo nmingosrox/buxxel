@@ -1,7 +1,15 @@
 {% macro product_card(listing, show_purveyor_button=True) %}
-<div class="col-lg-3 col-md-4 col-sm-6 listing-card" data-category="{{ listing.category }}" data-name="{{ listing.name|lower }}" data-image="{{ listing.image_urls[0] if listing.image_urls else '' }}">
+<div class="col-lg-3 col-md-4 col-sm-6 listing-card"
+     data-category="{{ listing.category }}"
+     data-name="{{ listing.name|lower }}"
+     data-title="{{ listing.name }}"
+     data-description="{{ listing.description|e }}"
+     data-image="{{ listing.image_urls[0] if listing.image_urls else 'https://via.placeholder.com/300x200.png?text=No+Image' }}"
+     data-price="{{ listing.price }}">
     <div class="card h-100 shadow-sm">
-        <img src="{{ listing.image_urls[0] if listing.image_urls else 'https://via.placeholder.com/300x200.png?text=No+Image' }}" class="card-img-top" alt="{{ listing.name }}">
+        <a href="#" class="listing-preview-trigger" data-bs-toggle="modal" data-bs-target="#listingPreviewModal">
+            <img src="{{ listing.image_urls[0] if listing.image_urls else 'https://via.placeholder.com/300x200.png?text=No+Image' }}" class="card-img-top" alt="{{ listing.name }}">
+        </a>
         <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ listing.name }}</h5>
             <p class="card-text fw-bold fs-5 mb-3">N${{ "%.2f"|format(listing.price) }}</p>
