@@ -16,12 +16,15 @@ class Config:
 
     UPLOADCARE_PUBLIC_KEY = os.environ.get("UPLOADCARE_PUBLIC_KEY")
     UPLOADCARE_SECRET_KEY = os.environ.get("UPLOADCARE_SECRET_KEY")
-
+    
+    # CUSTOM ENVIRONMENT VARIABLES
     COMMISSION_RATE = 0.10
 
     # Environment toggle (development, production, etc.)
-    FLASK_ENV = os.environ.get("FLASK_ENV", "development")
-
+    # Tries to get flask environment to us in configuration
+    # initialization and sets it to "development" if none 
+    # is found
+    FLASK_ENV = os.getenv("FLASK_ENV", "development")
 
 class DevelopmentConfig(Config):
     """Configuration for local development."""
