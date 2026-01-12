@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
             ? `${listing.image_urls[0]}-/preview/100x100/`
             : '/static/images/placeholder.png'; // Fallback image
 
-        // Use textContent for safe data injection
         const imageCell = row.insertCell();
         imageCell.innerHTML = `<img src="${imageUrl}" alt="" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">`;
         imageCell.querySelector('img').alt = listing.title;
@@ -65,16 +64,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return row;
     }
 
-    // Event listener for delete buttons (using event delegation)
     tableBody.addEventListener('click', async function(event) {
         const deleteButton = event.target.closest('.delete-listing-btn');
         if (deleteButton) {
             const listingId = deleteButton.dataset.id;
-            const imageUrls = JSON.parse(deleteButton.dataset.imageUrls); // Parse the JSON string back to an array
+            const imageUrls = JSON.parse(deleteButton.dataset.imageUrls);
 
             if (confirm(`Are you sure you want to delete listing ID ${listingId}? This action cannot be undone.`)) {
                 try {
-                    deleteButton.disabled = true; // Disable button during operation
+                    deleteButton.disabled = true;
                     deleteButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
                     const response = await fetch(`/admin/api/listings/${listingId}`, {
@@ -86,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                     }
 
-                    deleteButton.closest('tr').remove(); // Remove the row from the table
+                    deleteButton.closest('tr').remove();
                     if (tableBody.children.length === 0) {
                         noListingsMessage.style.display = 'block';
                     }
@@ -94,13 +92,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 } catch (error) {
                     console.error('Error deleting listing:', error);
                     alert(`Failed to delete listing: ${error.message}`);
-                    deleteButton.disabled = false; // Re-enable button on error
+                    deleteButton.disabled = false;
                     deleteButton.innerHTML = '<i class="bi bi-trash-fill"></i>';
                 }
             }
         }
     });
 
-    // Initial fetch
     fetchAndRenderListings();
 });
