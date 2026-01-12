@@ -1,0 +1,13 @@
+<!-- Sticky Cart Footer -->
+<div id="sticky-cart-footer" class="bg-warning text-dark p-3 fixed-bottom d-none">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <strong>Cart Summary:</strong> <span id="sticky-cart-count">0</span> items
+        </div>
+        <div>
+            <strong>Total:</strong> N$<span id="sticky-cart-total">0.00</span>
+        </div>
+        <a href="{{ url_for('checkout.checkout') }}" class="btn btn-dark">Checkout</a>
+    </div>
+</div>
+<!-- End Sticky Cart Footer -->
