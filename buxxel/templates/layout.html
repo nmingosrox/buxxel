@@ -1,21 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buxxel</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Set Uploadcare Public Key -->
-    <script>
-        UPLOADCARE_PUBLIC_KEY = '{{ uploadcare_public_key }}';
-    </script>
-    <!-- Uploadcare Widget -->
-    <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
-</head>
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Buxxel</title>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<!-- Set Uploadcare Public Key -->
+<script>UPLOADCARE_PUBLIC_KEY = '{{ uploadcare_public_key }}';</script>
+<!-- Uploadcare Widget -->
+<script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+
 <style>
     /* Styles for horizontally scrolling tags */
     .tags-scroll-wrapper {
@@ -35,297 +31,46 @@
         margin-right: 0;
     }
 </style>
-<body>
-    <style>
-        body { transition: padding-bottom 0.3s ease-out; }
-    </style>
 
-    <!-- Main Navigation Bar (Sticky on desktop, normal on mobile) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-lg-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/">
-  <img src="{{ url_for('static', filename='images/buxxel-high-resolution-logo-transparent.png') }}" alt="Buxxel Logo" height="40">
-</a>
-            <div class="d-none d-lg-flex mx-auto">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">All Listings</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="#">Purveyors</a></li>
-                </ul>
-            </div>
-            <!-- Search bar for desktop -->
-            <div class="mx-auto d-none d-lg-block">
-                <div class="input-group">
-                    <input type="text" class="form-control search-bar-custom" id="search-bar-desktop" placeholder="Search for listings...">
-                    <button class="btn btn-warning" type="button" aria-label="Search"><i class="bi bi-search"></i></button>
-                </div>
-            </div>
+</head>
 
-            <span id="location-display" class="navbar-text text-light me-3 d-none d-lg-inline"></span>
+<body> <style> body { transition: padding-bottom 0.3s ease-out; } </style>
 
-            <ul class="navbar-nav d-flex align-items-center flex-row">
-                <!-- Consistent Home Button -->
-                <li class="nav-item me-3">
-                    <a class="nav-link" href="{{ url_for('main.index') }}" aria-label="Home">
-                        <i class="bi bi-house-door-fill fs-4"></i>
-                    </a>
-                </li>
-                <li class="nav-item me-3">
-                    <a class="nav-link position-relative" href="#" id="cart-icon" data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="View shopping cart">
-                        <i class="bi bi-cart-fill fs-4"></i>
-                        <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-warning text-dark" id="cart-count">0</span>
-                    </a>
-                </li>
-                <div id="auth-guest" class="d-flex">
-                    <li class="nav-item me-2">
-                        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#authModal">Login</button>
-                    </li>
-                </div>
-                <div id="auth-user" class="d-none align-items-center">
-                    <a href="{{ url_for('admin.dashboard') }}" id="admin-link" class="btn btn-danger me-3 d-none">Admin</a>
-                    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary me-2">Dashboard</a>
-                    <button type="button" class="btn btn-outline-light" id="logout-btn">Logout</button>
-                </div>
-            </ul>
-        </div>
-    </nav>
+{% include 'partials/_navbar.html' %}
 
-    <!-- Sticky Search Bar for Mobile (hidden on desktop) -->
-    <div class="d-lg-none bg-dark p-2 sticky-top">
-        <div class="container-fluid">
-            <div class="input-group">
-                <input type="text" class="form-control search-bar-custom" id="search-bar-mobile" placeholder="Search for listings...">
-                <button class="btn btn-warning" type="button" aria-label="Search"><i class="bi bi-search"></i></button>
-            </div>
-        </div>
-    </div>
+{% include 'partials/_flash_messages.html' %}
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container-fluid mt-3">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category or 'info' }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+{% block content %}{% endblock %}
 
-    {% block content %}{% endblock %}
+{% include 'partials/_sticky_cart_footer.html' %}
 
-    <!-- Sticky Cart Footer (hidden by default) -->
-    <div id="sticky-cart-footer" class="fixed-bottom bg-dark text-white p-3 shadow-lg" style="display: none; z-index: 1040;">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div>
-                <span id="sticky-cart-info">1 item in your cart</span>
-                <strong class="ms-3" id="sticky-cart-total">N$0.00</strong>
-            </div>
-            <!-- This button will open the cart modal -->
-            <button class="btn btn-warning fw-bold" data-bs-toggle="modal" data-bs-target="#cartModal">
-                <i class="bi bi-cart-check-fill"></i> View Cart & Checkout
-            </button>
-        </div>
-    </div>
+{% include 'partials/_cart_modal.html' %}
 
+{% include 'partials/_purveyor_profile_modal.html' %}
 
-    <!-- Cart Modal -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLabel">Shopping Cart</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="cart-items-container">
-                        <!-- Cart items will be injected here by JavaScript -->
-                        <p>Your cart is empty.</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <span class="me-auto"><strong>Total: N$<span id="cart-total">0.00</span></strong></span>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="checkout-btn">Checkout</button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% include 'partials/_listing_preview_modal.html' %}
 
-    <!-- Purveyor Profile Modal -->
-    <div class="modal fade" id="purveyorProfileModal" tabindex="-1" aria-labelledby="purveyorProfileModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="purveyorProfileModalLabel">Purveyor Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="purveyor-profile-content">
-                    <!-- Purveyor details will be injected here by JavaScript -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% include 'partials/_contact_modal.html' %}
 
-    <!-- Listing Preview Modal -->
-<div class="modal fade" id="listingPreviewModal" tabindex="-1" aria-labelledby="listingPreviewModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 id="listingPreviewTitle" class="modal-title">Listing Title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Image -->
-        <img src="" id="listingPreviewImage" class="img-fluid mb-3" alt="Listing Preview">
+{% include 'partials/_auth_modal.html' %}
 
-        <!-- Details -->
-        <ul id="listingPreviewDetails" class="list-unstyled">
-          <!-- Bullet points injected here -->
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Supabase JS Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Contact Purveyor Modal (Placeholder) -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalLabel">Contact Purveyor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>This feature is coming soon! You'll be able to contact purveyors directly from here.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Supabase client initialization -->
+<script src="{{ url_for('static', filename='js/supabaseClient.js') }}"></script>
 
-    <!-- Auth Modal (Login & Signup) -->
-    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="authModalLabel">Login or Create an Account</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Contextual message placeholder -->
-                    <div id="auth-context-message" class="alert alert-info" style="display: none;"></div>
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
-                    <!-- Login Form -->
-                    <h6 class="mb-3">Login to your account</h6>
-                    <form id="loginForm">
-                        <div id="login-alert" class="alert" role="alert" style="display: none;"></div>
-                        <div class="mb-3">
-                            <label for="loginIdentifier" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="loginIdentifier" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                        <div class="text-center mt-2">
-                            <a href="#" id="forgot-password-link" class="form-text">Forgot Password?</a>
-                        </div>
-                    </form>
+{% block page_scripts %}{% endblock %}
 
-                    <hr class="my-4">
+</body> </html>}
 
-                    <!-- Signup Form -->
-                    <div id="signup-view">
-                        <h6 class="mb-3">Don't have an account? Sign up below.</h6>
-                        <form id="signupForm">
-                            <div id="signup-alert" class="alert" role="alert" style="display: none;"></div>
-                            <div class="mb-3">
-                                <label for="signupEmail" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="signupEmail" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="signupPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="signupPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirmPassword" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-                        </form>
-                    </div>
-
-                    <!-- Password Reset Request Form (Initially Hidden) -->
-                    <div id="password-reset-view" style="display: none;">
-                        <h6 class="mb-3">Reset Your Password</h6>
-                        <p class="form-text">Enter your email address and we will send you a link to reset your password.</p>
-                        <form id="resetPasswordRequestForm">
-                            <div id="reset-request-alert" class="alert" role="alert" style="display: none;"></div>
-                            <div class="mb-3">
-                                <label for="resetEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="resetEmail" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
-                            <div class="text-center mt-2">
-                                <a href="#" id="back-to-login-link" class="form-text">Back to Login</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Supabase JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Our Supabase client initializer -->
-    <script>
-        // Custom storage adapter to sync session between localStorage and cookies for SSR
-        const cookieStorageAdapter = {
-            getItem: (key) => {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.startsWith(key + '=')) {
-                        return cookie.substring(key.length + 1);
-                    }
-                }
-                return localStorage.getItem(key); // Fallback to localStorage
-            },
-            setItem: (key, value) => {
-                const expirationDate = new Date();
-                expirationDate.setFullYear(expirationDate.getFullYear() + 1); // 1 year expiration
-                document.cookie = `${key}=${value};path=/;expires=${expirationDate.toUTCString()};SameSite=Lax`;
-                localStorage.setItem(key, value); // Also set in localStorage
-            },
-            removeItem: (key) => {
-                document.cookie = `${key}=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;SameSite=Lax`;
-                localStorage.removeItem(key); // Also remove from localStorage
-            },
-        };
-
-        // Initialize the Supabase client with credentials from the server
-        // We assign directly to window.supabaseClient to avoid variable shadowing issues.
-        window.supabaseClient = supabase.createClient("{{ supabase_url }}", "{{ supabase_key }}", {
-            auth: { storage: cookieStorageAdapter, autoRefreshToken: true, persistSession: true, detectSessionInUrl: true },
-        });
-    </script>
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    {% block page_scripts %}{% endblock %}
 </body>
+
 </html>
