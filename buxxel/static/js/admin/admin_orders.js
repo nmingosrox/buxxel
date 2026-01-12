@@ -65,13 +65,11 @@ $(document).ready(function() {
         }
     }
 
-    // Show the "Update" button when a new status is selected
     ordersTableBody.on('change', '.status-select', function() {
         const updateBtn = $(this).siblings('.update-status-btn');
         updateBtn.show();
     });
 
-    // Handle the click on the "Update" button
     ordersTableBody.on('click', '.update-status-btn', async function() {
         const orderId = $(this).data('order-id');
         const updateBtn = $(this);
@@ -99,10 +97,9 @@ $(document).ready(function() {
             if (!response.ok) throw new Error('Failed to update status.');
 
             const updatedOrder = await response.json();
-            // Update the badge in the UI
             const statusBadge = selectElement.closest('tr').find('.badge');
-            statusBadge.text(updatedOrder.status).removeClass('bg-info bg-success').addClass('bg-success'); // Change color for feedback
-            updateBtn.hide(); // Hide the button after successful update
+            statusBadge.text(updatedOrder.status).removeClass('bg-info bg-success').addClass('bg-success');
+            updateBtn.hide();
 
         } catch (error) {
             console.error("Error updating status:", error);
@@ -112,6 +109,5 @@ $(document).ready(function() {
         }
     });
 
-    // Initial load
     fetchOrders();
 });
