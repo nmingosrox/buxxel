@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
-from buxxel.extensions import supabase, supabase_admin
-from buxxel.auth.decorators import auth_required
+from buxxel.database import supabase, supabase_admin
+from buxxel.decorators import auth_required
 
 orders_api_bp = Blueprint('orders_api', __name__, url_prefix='/api')
 

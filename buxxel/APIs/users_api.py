@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
-from buxxel.extensions import supabase
-from buxxel.auth.decorators import auth_required
+from buxxel.database import supabase
+from buxxel.decorators import auth_required
 
 profiles_api_bp = Blueprint('profiles_api', __name__, url_prefix='/api')
 
