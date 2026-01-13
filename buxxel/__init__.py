@@ -21,7 +21,7 @@ def create_app(config_class=Config):
         raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
 
     # Register blueprints
-    from buxxel.routes import all_page_blueprints
+    from .routes import all_page_blueprints
     from .APIs.listings import listings_api_bp
     from .APIs.profiles import profiles_api_bp
     from .APIs.admin_orders import admin_orders_api_bp
