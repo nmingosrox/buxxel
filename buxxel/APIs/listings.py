@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from buxxel.extensions import supabase
+from buxxel.database import supabase
 from postgrest import APIError
 from buxxel.auth.decorators import auth_required
 
