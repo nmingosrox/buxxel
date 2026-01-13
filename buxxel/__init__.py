@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config
+from buxxel.config import Config
 from buxxel import database  # supabase clients live here
 
 
