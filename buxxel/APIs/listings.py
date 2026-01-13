@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from buxxel.database import supabase
 from postgrest import APIError
-from buxxel.auth.decorators import auth_required
+from decorators import auth_required
 
 listings_api_bp = Blueprint('listings_api', __name__, url_prefix='/api')
 
