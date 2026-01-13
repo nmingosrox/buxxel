@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from buxxel.buxxel import database  # supabase clients live here
+from buxxel import database  # supabase clients live here
 
 
 def create_app(config_class=Config):
