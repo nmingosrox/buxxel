@@ -1,5 +1,5 @@
 from supabase import create_client, Client
-from config import Config
+from buxxel.config import Config
 
 # Standard client for user-specific operations (anon key)
 supabase: Client = create_client(Config.SUPABASE_URL, Config.SUPABASE_ANON_KEY)
@@ -10,4 +10,5 @@ supabase_admin: Client = create_client(Config.SUPABASE_URL, Config.SUPABASE_SERV
 # Utility function to create isolated clients (used in decorators for validation)
 def create_supabase_client(url: str, key: str) -> Client:
     return create_client(url, key)
+
 
