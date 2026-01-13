@@ -1,5 +1,5 @@
 from flask import Flask
-from buxxel.config import Config
+from config import Config
 from buxxel.buxxel import database  # supabase clients live here
 
 
@@ -16,8 +16,9 @@ def create_app(config_class=Config):
         'UPLOADCARE_SECRET_KEY',
         'SECRET_KEY'
     ]
-    if not all(app.config.get(k) for k in required_keys):
-        raise ValueError("All required credentials must be set in the environment or config.")
+    missing = [k for k in required_keys if not app.config.get(k)]
+    if missing:
+        raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
 
     # Register blueprints
     from buxxel.routes import all_page_blueprints
