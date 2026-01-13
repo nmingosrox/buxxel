@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, redirect, url_for, flash
 import json
-from database import supabase
+from buxxel.database import supabase
 
 # --- Basic API Auth ---
 def auth_required(f):
