@@ -19,16 +19,16 @@ def create_app(config_class=Config):
     missing = [k for k in required_keys if not app.config.get(k)]
     if missing:
         raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
-
+    # The blueprints are exposed by __init__.py files inside modules
     # Register blueprints
     from .routes import all_page_blueprints
-    from .APIs.listings_api import listings_api_bp
-    from .APIs.profiles_api import profiles_api_bp
-    from .APIs.orders_api import orders_api_bp
+    from .APIs import listings_api_bp
+    from .APIs import profiles_api_bp
+    from .APIs import orders_api_bp
     
-    from .APIs.admin_orders_api import admin_orders_api_bp
-    from .APIs.admin_listings_api import admin_listings_api_bp
-    from .APIs.admin_users_api import admin_users_api_bp
+    from .APIs import admin_orders_api_bp
+    from .APIs import admin_listings_api_bp
+    from .APIs import admin_users_api_bp
     
     # register all page blueprints
     for bp in all_page_blueprints:
