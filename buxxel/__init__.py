@@ -21,7 +21,7 @@ def create_app(config_class=Config):
         raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
     # The blueprints are exposed by __init__.py files inside modules
     # Register blueprints
-    from .routes import all_page_blueprints
+    from .routes import __all__
     from .APIs import listings_api_bp
     from .APIs import profiles_api_bp
     from .APIs import orders_api_bp
