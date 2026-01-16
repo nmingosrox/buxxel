@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request, current_app
-from buxxel.auth.decorators import admin_api_required
+from buxxel.auth.decorators import admin_required
 from buxxel.extensions import supabase_admin, create_client
 
 admin_orders_api_bp = Blueprint('admin_orders_api', __name__, url_prefix='/api/admin')
 
 @admin_orders_api_bp.route('/orders', methods=['GET'])
-@admin_api_required
+@admin_required
 def get_all_orders(user):
     """
     Fetches all orders from the database.
@@ -25,7 +25,7 @@ def get_all_orders(user):
         return jsonify({"error": "An unexpected error occurred while fetching orders."}), 500
 
 @admin_orders_api_bp.route('/orders/<order_id>/status', methods=['PUT'])
-@admin_api_required
+@admin_required
 def update_order_status(user, order_id):
     """
     Updates the status of a specific order.
