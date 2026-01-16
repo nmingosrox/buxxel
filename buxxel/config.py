@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv(".env")
+# Load .env file from the same directory
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 class Config:
     """Base configuration."""
