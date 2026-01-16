@@ -4,13 +4,16 @@ from flask import Flask
 from buxxel.config import DevelopmentConfig, ProductionConfig
 from buxxel import database  # supabase clients live here
 
-#set configuration class
-#change it to change between dev and prod
+# set configuration class
+# change it to switch between dev and prod
 config = DevelopmentConfig
 
 def create_app(config_name="development"):
     """Application factory with explicit configuration classes."""
     app = Flask(__name__, instance_relative_config=True)
+
+    # Apply the chosen configuration class
+    app.config.from_object(config)
 
     # Check for essential configuration keys
     required_keys = [
