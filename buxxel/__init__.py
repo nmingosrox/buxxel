@@ -8,7 +8,7 @@ from buxxel import database  # supabase clients live here
 # change it to switch between dev and prod
 config = DevelopmentConfig
 
-def create_app(config_name="development"):
+def create_app():
     """Application factory with explicit configuration classes."""
     app = Flask(__name__, instance_relative_config=True)
 
