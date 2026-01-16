@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request, current_app
-from buxxel.decorators import admin_api_required
+from buxxel.decorators import admin_required
 from buxxel.database import supabase_admin
 
 admin_listings_api_bp = Blueprint("admin_listings_api", __name__, url_prefix="/api/admin/listings")
 
 @admin_listings_api_bp.route("/", methods=["GET"])
-@admin_api_required
+@admin_required
 def get_listings(user):
     """Fetch listings with purveyor info via RPC."""
     try:
