@@ -1,4 +1,6 @@
 from supabase import create_client, Client
+#bconsider setting configuration settings here too
+# define configuration constraints in documentation
 from buxxel.config import Config
 
 # Standard client for user-specific operations (anon key)
