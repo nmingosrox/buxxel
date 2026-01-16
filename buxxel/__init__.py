@@ -1,11 +1,19 @@
+# buxxel/__init__.py
+import os
 from flask import Flask
-from buxxel.config import Config
+from buxxel.config import DevelopmentConfig, ProductionConfig
 from buxxel import database  # supabase clients live here
 
 
-def create_app(config_class=Config):
+def create_app(config_name="development"):
+    """Application factory with explicit configuration classes."""
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(config_class)
+
+    # Explicitly choose config class
+    if config_name == "production":
+        app.config.from_object(ProductionConfig)
+    else:
+        app.config.from_object(DevelopmentConfig)
 
     # Check for essential configuration
     required_keys = [
@@ -19,16 +27,14 @@ def create_app(config_class=Config):
     missing = [k for k in required_keys if not app.config.get(k)]
     if missing:
         raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
-    # The blueprints are exposed by __init__.py files inside modules
+
     # Register blueprints
     from .routes import __all__ as all_pages
-    from .APIs import __all__ as all_apis
-    
-    # register all page blueprints
+    from .routes.apis import __all__ as all_apis
+
     for bp in all_pages:
         app.register_blueprint(bp)
-        
-    # register all API blueprints
+
     for bp in all_apis:
         app.register_blueprint(bp)
 
