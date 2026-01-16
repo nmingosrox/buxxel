@@ -1,3 +1,9 @@
+from flask import Blueprint, render_template
+from buxxel.database import supabase   # adjust import if supabase client lives elsewhere
+
+# Define the blueprint
+main_bp = Blueprint("main", __name__)
+
 @main_bp.route("/")
 def index():
     """Renders the home page by fetching listings from Supabase."""
