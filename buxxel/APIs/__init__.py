@@ -14,7 +14,7 @@ from .profiles_api import profiles_api_bp
 # Admin APIs
 from .admin.admin_listings_api import admin_listings_api_bp
 from .admin.admin_orders_api import admin_orders_api_bp
-from .admin.admin_profiles_api import admin_users_api_bp
+from .admin.admin_profiles_api import admin_profiles_api_bp
 
 __all__ = [
     # Core
