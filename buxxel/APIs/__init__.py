@@ -22,7 +22,7 @@ __all__ = [
     "orders_api_bp",
     "listings_api_bp",
     # Admin
-    "admin_listings_api_bp",,
+    "admin_listings_api_bp",
     "admin_orders_api_bp",
     "admin_users_api_bp",
 ]
