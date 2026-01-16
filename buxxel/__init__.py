@@ -35,9 +35,10 @@ def create_app(config_class=Config):
         app.register_blueprint(bp)
     app.register_blueprint(listings_api_bp)
     app.register_blueprint(profiles_api_bp)
-    app.register_blueprint(admin_api_bp)
-    app.register_blueprint(admin_orders_api_bp)
     app.register_blueprint(orders_api_bp)
+    app.register_blueprint(admin_listings_api_bp)
+    app.register_blueprint(admin_orders_api_bp)
+    app.register_blueprint(admin_profiles_api_bp)
 
     # Register context processors
     @app.context_processor
