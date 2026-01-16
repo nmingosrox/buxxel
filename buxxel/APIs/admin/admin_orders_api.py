@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, current_app
-from buxxel.auth.decorators import admin_required
+from buxxel.decorators import admin_required
 from buxxel.extensions import supabase_admin, create_client
 
 admin_orders_api_bp = Blueprint('admin_orders_api', __name__, url_prefix='/api/admin')
