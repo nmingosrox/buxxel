@@ -8,7 +8,7 @@ from .admin import admin_bp
 # from .orders import orders_bp
 
 # Collect all blueprints in a list for easy registration
-all_page_blueprints = [
+__all__ = [
     main_bp,
     dashboard_bp,
     checkout_bp,
