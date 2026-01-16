@@ -28,7 +28,7 @@ def create_app(config_class=Config):
     
     from .APIs import admin_orders_api_bp
     from .APIs import admin_listings_api_bp
-    from .APIs import admin_users_api_bp
+    from .APIs import admin_profiles_api_bp
     
     # register all page blueprints
     for bp in all_page_blueprints:
