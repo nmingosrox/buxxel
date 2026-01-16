@@ -9,7 +9,7 @@ Provides access to core API modules and admin-specific APIs.
 # Core APIs
 from .listings_api import listings_api_bp
 from .orders_api import orders_api_bp
-from .users_api import users_api_bp
+from .profiles_api import profiles_api_bp
 
 # Admin APIs
 from .admin.admin_listings_api import admin_listings_api_bp
