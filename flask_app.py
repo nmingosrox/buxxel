@@ -15,4 +15,4 @@ from buxxel import create_app
 # Create the WSGI application object
 # WSGI servers (Gunicorn, uWSGI, Waitress, mod_wsgi, PythonAnywhere, etc.)
 # will look for this 'application' object.
-application = create_app()
+app = create_app()
