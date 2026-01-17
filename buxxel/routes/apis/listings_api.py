@@ -189,14 +189,38 @@ def handle_listing_status(user, listing_id):
         current_app.logger.error(f"Error updating status for listing {listing_id}: {e}", exc_info=True)
         return jsonify({"error": "An unexpected server error occurred."}), 500
 
-@listings_api_bp.route('/tags/popular', methods=['GET'])
-def get_popular_tags():
+
+@listings_api_bp.route('/categories/popular', methods=['GET'])
+def get_categories():
     try:
-        response = supabase.rpc('get_popular_tags', {'limit_count': 10}).execute()
-        if response.data: return jsonify(response.data), 200
-        
-        default_tags = [{'tag': 'electronics', 'count': 0}, {'tag': 'books', 'count': 0}]
-        return jsonify(default_tags), 200
+        # Call Supabase RPC
+        response = supabase.rpc('get_categories', {'limit_count': 10}).execute()
+
+        # 1. Handle explicit Supabase errors first
+        if response.error:
+            current_app.logger.error(
+                f"Supabase RPC error: {response.error}",
+                exc_info=True
+            )
+            return jsonify({
+                "error": "Failed to load categories",
+                "details": str(response.error)
+            }), 502
+
+        # 2. Handle empty data
+        if not response.data:
+            current_app.logger.warning("No categories returned from Supabase")
+            return jsonify({
+                "error": "No categories found"
+            }), 404
+
+        # 3. Success case
+        return jsonify(response.data), 200
+
     except Exception as e:
-        current_app.logger.error(f"Error fetching popular tags: {e}")
-        return jsonify({"error": "Could not load tags."}), 500
+        # Catch unexpected Flask or runtime errors
+        current_app.logger.error(
+            f"Unexpected error fetching categories: {e}",
+            exc_info=True
+        )
+        return jsonify({"error": "Internal server error while loading categories."}), 500
