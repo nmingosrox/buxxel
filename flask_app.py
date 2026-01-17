@@ -16,4 +16,4 @@ except ImportError as e:
 # Create the WSGI application object
 # WSGI servers (Gunicorn, uWSGI, Waitress, mod_wsgi, PythonAnywhere, etc.)
 # will look for this 'application' object.
-app = create_app(config = ProductionConfig)
+app = create_app(ProductionConfig)
