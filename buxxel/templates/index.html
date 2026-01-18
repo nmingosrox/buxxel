@@ -12,9 +12,14 @@
     </div>
 </div>
 
-{% include "partials/_hero.html" %}
-
 <main class="container">
+    <ul>
+  {% for listing in listings %}
+    <li>
+      {{ listing }}
+    </li>
+  {% endfor %}
+    </ul>
     <!-- Listings Grid -->
     <div class="row g-4" id="listing-grid">
         <!-- Product cards will be dynamically injected here by app.js -->
