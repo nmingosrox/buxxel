@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 from buxxel.database import supabase   # adjust import if supabase client lives elsewhere
 
 # Define the blueprint
@@ -18,7 +18,7 @@ def index():
         has_next = total_listings > per_page    # show "Load More" if more than one page
 
         print(f"✅ Listings fetched. Total: {total_listings}, showing {len(listings)}.")
-        return listings#render_template("index.html", listings=listings, has_next=has_next)
+        return jsonify(listings)#render_template("index.html", listings=listings, has_next=has_next)
     except Exception as e:
         print(f"❌ Error fetching listings: {e}")
         return render_template("index.html", listings=[], has_next=False, error="Could not connect to the database.")
