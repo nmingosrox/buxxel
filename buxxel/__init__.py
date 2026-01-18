@@ -29,13 +29,13 @@ def create_app(config = DevelopmentConfig):
         raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
 
     # Register blueprints
-    from .routes import __all__ as all_pages
-    from .routes.apis import __all__ as all_apis
+    from .routes import __all_api__
+    from .routes import __all_views__
 
-    for bp in all_pages:
+    for bp in __all_views__:
         app.register_blueprint(bp)
 
-    for bp in all_apis:
+    for bp in __all_apis__:
         app.register_blueprint(bp)
 
     # Register context processors
