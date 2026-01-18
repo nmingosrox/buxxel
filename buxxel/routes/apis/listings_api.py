@@ -8,7 +8,7 @@ listings_api_bp = Blueprint('listings_api', __name__, url_prefix='/api')
 @listings_api_bp.route('/listings/paged', methods=['GET'])
 def get_paged_listings():
     page = request.args.get('page', 1, type=int)
-    tag = request.args.get('tag', None, type=str)
+    category = request.args.get('category', None, type=str)
     search_term = request.args.get('search', None, type=str)
     per_page = 12
 
@@ -17,7 +17,7 @@ def get_paged_listings():
             'page_num': page,
             'page_size': per_page,
             'search_query': search_term if search_term else None,
-            'tag_filter': tag if tag else None
+            'category_filter': category if category else None
         }
         
         response = supabase.rpc('get_public_listings_paged', params).execute()
