@@ -35,7 +35,7 @@ def create_app(config = DevelopmentConfig):
     for bp in __all_views__:
         app.register_blueprint(bp)
 
-    for bp in __all_apis__:
+    for bp in __all_api__:
         app.register_blueprint(bp)
 
     # Register context processors
