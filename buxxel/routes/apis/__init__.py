@@ -18,11 +18,11 @@ from .admin.admin_profiles_api import admin_profiles_api_bp
 
 __all__ = [
     # Core
-    "listings_api_bp",
-    "orders_api_bp",
-    "profiles_api_bp",
+    listings_api_bp,
+    orders_api_bp,
+    profiles_api_bp,
     # Admin
-    "admin_listings_api_bp",
-    "admin_orders_api_bp",
-    "admin_profiles_api_bp",
+    admin_listings_api_bp,
+    admin_orders_api_bp,
+    admin_profiles_api_bp,
 ]
