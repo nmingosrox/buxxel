@@ -1,13 +1,28 @@
+{% macro auth_button(label='Login', target='#authModal') %}
+<div id="auth-guest" class="d-flex">
+    <li class="nav-item me-2">
+        <button type="button"
+                class="btn btn-outline-light"
+                data-bs-toggle="modal"
+                data-bs-target="{{ target }}">
+            {{ label }}
+        </button>
+    </li>
+</div>
+{% endmacro %}
+
+{% macro auth_modal(id='authModal') %}
 <!-- Auth Modal -->
-<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}Label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="authModalLabel">Login to Buxxel</h5>
+                <h5 class="modal-title" id="{{ id }}Label">Login to Buxxel</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="auth-forms-container">
+                    
                     <!-- Login Form -->
                     <form id="login-form" class="needs-validation" novalidate>
                         <div class="mb-3">
@@ -28,7 +43,7 @@
                         <div id="login-error" class="text-danger"></div>
                     </form>
 
-                    <!-- Signup Form (hidden by default) -->
+                    <!-- Signup Form -->
                     <form id="signup-form" class="needs-validation d-none" novalidate>
                         <div class="mb-3">
                             <label for="signup-email" class="form-label">Email address</label>
@@ -52,7 +67,7 @@
                         <div id="signup-error" class="text-danger"></div>
                     </form>
 
-                    <!-- Password Reset Form (hidden by default) -->
+                    <!-- Reset Form -->
                     <form id="reset-password-form" class="needs-validation d-none" novalidate>
                         <div class="mb-3">
                             <label for="reset-email" class="form-label">Email address</label>
@@ -66,9 +81,11 @@
                         <div id="reset-error" class="text-danger"></div>
                         <div id="reset-success" class="text-success"></div>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 <!-- End Auth Modal -->
+{% endmacro %}
