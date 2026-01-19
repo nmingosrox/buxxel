@@ -12,11 +12,56 @@
     </div>
 </div>
 
+<div class="row">
+  {% for listing in listings %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <!-- Product Image -->
+        {% if listing.image_urls %}
+          <img src="{{ listing.image_urls[0] }}" class="card-img-top" alt="{{ listing.name }}">
+        {% endif %}
+
+        <div class="card-body">
+          <!-- Product Name -->
+          <h5 class="card-title">{{ listing.name }}</h5>
+
+          <!-- Description -->
+          <p class="card-text">{{ listing.description }}</p>
+
+          <!-- Price -->
+          <p class="fw-bold">N${{ listing.price }}</p>
+
+          <!-- Stock -->
+          <p class="text-muted">Stock: {{ listing.stock }}</p>
+
+          <!-- Tags -->
+          {% if listing.tags %}
+            <p>
+              {% for tag in listing.tags %}
+                <span class="badge bg-secondary">{{ tag }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
+
+          <!-- Category -->
+          <p class="text-muted">Category: {{ listing.category }}</p>
+
+          <!-- Action Buttons -->
+          <a href="/product/{{ listing.id }}" class="btn btn-primary">View</a>
+          <button class="btn btn-success">Add to Cart</button>
+        </div>
+
+        <div class="card-footer text-muted">
+          Added on {{ listing.created_at }}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
 <main class="container">
     <ul>
-  {% for listing in listings %}
-    <li>
-      {{ listing }}
+
     </li>
   {% endfor %}
     </ul>
