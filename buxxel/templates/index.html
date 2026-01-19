@@ -12,6 +12,7 @@
     </div>
 </div>
 
+<!-- Listings Grid -->
 <div class="row">
   {% for listing in listings %}
     <div class="col-md-4 mb-4">
@@ -60,15 +61,6 @@
 </div>
 
 <main class="container">
-    <ul>
-
-    </li>
-  {% endfor %}
-    </ul>
-    <!-- Listings Grid -->
-    <div class="row g-4" id="listing-grid">
-        <!-- Product cards will be dynamically injected here by app.js -->
-    </div>
     {% if error %}
         <div class="text-center p-5">
             <h4 class="text-danger">{{ error }}</h4>
@@ -78,7 +70,9 @@
     <!-- Pagination Controls -->
     <div id="load-more-container" class="text-center mt-5">
         {% if has_next %}
-            <button id="load-more-btn" class="btn btn-primary btn-lg" data-next-page="2">Load More Listings</button>
+            <button id="load-more-btn" class="btn btn-primary btn-lg" data-next-page="2">
+                Load More Listings
+            </button>
         {% endif %}
     </div>
 
@@ -97,4 +91,5 @@
 <footer class="bg-dark text-white text-center p-3 mt-5">
     <p>&copy; 2024 Buxxel. All Rights Reserved.</p>
 </footer>
+
 {% endblock %}
