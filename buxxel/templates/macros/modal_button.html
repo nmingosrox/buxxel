@@ -1,0 +1,11 @@
+{# modal_button.html #}
+{% macro 
+  modal_button(label, modal_id, btn_class="btn btn-primary") 
+%}
+  <button type="button"
+          class="{{ btn_class }}"
+          data-bs-toggle="modal"
+          data-bs-target="#{{ modal_id }}">
+    {{ label }}
+  </button>
+{% endmacro %}
