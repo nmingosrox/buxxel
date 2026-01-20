@@ -35,6 +35,9 @@
                     <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-warning text-dark" id="cart-count">0</span>
                 </a>
             </li>
+            {% from 'macros/auth_modal.html' import auth_button, auth_modal %}
+            {{ auth_button() }}
+            {{ auth_modal() }}
             <div id="auth-guest" class="d-flex">
                 <li class="nav-item me-2">
                     <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#authModal">Login</button>
