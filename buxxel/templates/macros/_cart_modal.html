@@ -1,33 +1,34 @@
-{# templates/macros/ui.html #}
+{# templates/macros/_cart_modal.html #}
 
-{% macro cart_button(label, type="button", classes="btn btn-primary") %}
-  <button type="{{ type }}" class="{{ classes }}">
+{% macro cart_button(label, type="button", classes="btn btn-primary", extra="") %}
+  <button type="{{ type }}" class="{{ classes }}" {{ extra }}>
     {{ label }}
   </button>
 {% endmacro %}
 
 
-{% macro cart_modal(id, title, body, footer="") %}
+{% macro cart_modal(id="cartModal", title="Your Cart", body="", footer="") %}
   <div class="modal fade" id="{{ id }}" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         
         <div class="modal-header">
           <h5 class="modal-title">{{ title }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          {{ cart_button("×", type="button", classes="close", extra='data-dismiss="modal" aria-label="Close") }}
         </div>
         
         <div class="modal-body">
           {{ body }}
         </div>
         
-        {% if footer %}
         <div class="modal-footer">
-          {{ footer }}
+          {% if footer %}
+            {{ footer }}
+          {% else %}
+            {{ cart_button("Close", type="button", classes="btn btn-secondary", extra='data-dismiss="modal"') }}
+            {{ cart_button("Checkout", type="submit", classes="btn btn-primary") }}
+          {% endif %}
         </div>
-        {% endif %}
         
       </div>
     </div>
