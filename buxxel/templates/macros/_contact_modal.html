@@ -45,7 +45,7 @@
 {% endmacro %}
 
 
-{% macro button(label, type="button", classes="btn btn-primary", extra="") %}
+{% _contact_macro button(label, type="button", classes="btn btn-primary", extra="") %}
   <button type="{{ type }}" class="{{ classes }}" {{ extra }}>
     {{ label }}
   </button>
