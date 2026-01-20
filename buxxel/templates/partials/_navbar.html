@@ -28,13 +28,15 @@
                 </a>
             </li>
             {% from 'macros/_cart_modal.html' import cart_button, cart_modal %}
-            {{ cart_button() }}
-            {{ cart_modal }}
+            {{ cart_button("View Cart", type="button", classes="btn btn-info", extra='data-toggle="modal" data-target="#cartModal"') }}
+            {{ cart_modal() }}
+
             {% from 'macros/_auth_modal.html' import auth_button, auth_modal %}
-            {{ auth_button() }}
+            {{ auth_button("Login", type="button", classes="btn btn-primary", extra='data-toggle="modal" data-target="#authModal"') }}
             {{ auth_modal() }}
+
             {% from 'macros/_contact_modal.html' import contact_button, contact_modal %}
-            {{ contact_button() }}
+            {{ contact_button("Contact Us", type="button", classes="btn btn-secondary", extra='data-toggle="modal" data-target="#contactModal"') }}
             {{ contact_modal() }}
             <div id="auth-user" class="d-none align-items-center">
                 <a href="{{ url_for('admin.dashboard') }}" id="admin-link" class="btn btn-danger me-3 d-none">Admin</a>
