@@ -1,0 +1,27 @@
+<footer class="bg-dark text-light py-4 mt-auto">
+  <div class="container text-center">
+    <!-- Brand -->
+    <h5 class="text-warning fw-bold">Buxxel</h5>
+    <p class="mb-2">Buy products or hire services directly from people.</p>
+
+    <!-- Links -->
+    <ul class="list-inline mb-3">
+      <li class="list-inline-item">
+        <a href="{{ url_for('main.index') }}" class="text-light text-decoration-none">Home</a>
+      </li>
+      <li class="list-inline-item">
+        <a href="{{ url_for('main.browse') }}" class="text-light text-decoration-none">Browse</a>
+      </li>
+      <li class="list-inline-item">
+        <a href="{{ url_for('listings_api.create_listing') }}" class="text-warning text-decoration-none">Post Listing</a>
+      </li>
+      <li class="list-inline-item">
+        <a href="#" class="text-light text-decoration-none">Login</a>
+      </li>
+    </ul>
+
+    <!-- Copyright -->
+    <small class="text-muted">&copy; {{ current_year }} Buxxel. All rights reserved.</small>
+  </div>
+</footer>
+

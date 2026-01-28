@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from buxxel.config import DevelopmentConfig, ProductionConfig
 from buxxel import database  # supabase clients live here
+from jinja2 import TemplateNotFound
 
 # set configuration class
 # change it to switch between dev and prod
@@ -37,6 +38,15 @@ def create_app(config = DevelopmentConfig):
 
     for bp in __all_api__:
         app.register_blueprint(bp)
+
+    # Global error handlers
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template("error_pages/e_404.html"), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return render_template("error_pages/e_500.html"), 500
 
     # Register context processors
     @app.context_processor

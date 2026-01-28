@@ -1,95 +1,21 @@
-{% extends 'layout.html' %}
+{% extends "base.html" %}
+
+{% block title %}Buxxel - home{% endblock %}
 
 {% block content %}
-
-<!-- Horizontally Scrolling Categories Bar -->
-<div class="popular-categories-bar bg-light shadow-sm py-2 mb-4">
-    <div class="container-fluid d-flex align-items-center">
-        <span class="text-muted me-3 flex-shrink-0">Categories:</span>
-        <div class="categories-scroll-wrapper">
-            <div id="categories-container" class="d-flex flex-nowrap"></div>
-        </div>
+{% include 'components/navbar.html' %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="jumbotron text-center bg-light p-5 rounded">
+        <h1 class="display-4">Welcome to Buxxel</h1>
+        <p class="lead">Buy products or hire services conviniently</p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('main.browse') }}" role="button">
+            Browse Listings
+        </a>
+        <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('listings_api.create_listing') }}" role="button">
+            Post a Listing
+        </a>
     </div>
 </div>
-
-<!-- Listings Grid -->
-<div class="row">
-  {% for listing in listings %}
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <!-- Product Image -->
-        {% if listing.image_urls %}
-          <img src="{{ listing.image_urls[0] }}" class="card-img-top" alt="{{ listing.name }}">
-        {% endif %}
-
-        <div class="card-body">
-          <!-- Product Name -->
-          <h5 class="card-title">{{ listing.name }}</h5>
-
-          <!-- Description -->
-          <p class="card-text">{{ listing.description }}</p>
-
-          <!-- Price -->
-          <p class="fw-bold">N${{ listing.price }}</p>
-
-          <!-- Stock -->
-          <p class="text-muted">Stock: {{ listing.stock }}</p>
-
-          <!-- Tags -->
-          {% if listing.tags %}
-            <p>
-              {% for tag in listing.tags %}
-                <span class="badge bg-secondary">{{ tag }}</span>
-              {% endfor %}
-            </p>
-          {% endif %}
-
-          <!-- Category -->
-          <p class="text-muted">Category: {{ listing.category }}</p>
-
-          <!-- Action Buttons -->
-          <a href="/product/{{ listing.id }}" class="btn btn-primary">View</a>
-          <button class="btn btn-success">Add to Cart</button>
-        </div>
-
-        <div class="card-footer text-muted">
-          Added on {{ listing.created_at }}
-        </div>
-      </div>
-    </div>
-  {% endfor %}
-</div>
-
-<main class="container">
-    {% if error %}
-        <div class="text-center p-5">
-            <h4 class="text-danger">{{ error }}</h4>
-        </div>
-    {% endif %}
-
-    <!-- Pagination Controls -->
-    <div id="load-more-container" class="text-center mt-5">
-        {% if has_next %}
-            <button id="load-more-btn" class="btn btn-primary btn-lg" data-next-page="2">
-                Load More Listings
-            </button>
-        {% endif %}
-    </div>
-
-    <!-- Purveyor CTA Section (for guests only, hidden by default) -->
-    <section id="guest-cta-section" class="my-5" style="display: none;">
-        <div class="card text-center bg-light border-0">
-            <div class="card-body p-4">
-                <h4 class="card-title">Ready to sell on Buxxel?</h4>
-                <p class="card-text">Join our community of purveyors and start reaching customers today.</p>
-                <a href="#" id="create-listing-cta" class="btn btn-warning">Create a Listing</a>
-            </div>
-        </div>
-    </section>
-</main>
-
-<footer class="bg-dark text-white text-center p-3 mt-5">
-    <p>&copy; 2024 Buxxel. All Rights Reserved.</p>
-</footer>
-
 {% endblock %}

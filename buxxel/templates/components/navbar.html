@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand text-warning fw-bold" href="{{ url_for('main.index') }}">
+      Buxxel
+    </a>
+
+    <!-- Toggler for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav" aria-controls="navbarNav" 
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{{ url_for('main.index') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{{ url_for('main.browse') }}">Browse</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-warning" href="{{ url_for('listings_api.create_listing') }}">
+            Post Listing
+          </a>
+        </li>
+        {% if authenticated %}
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#">Sign Up</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

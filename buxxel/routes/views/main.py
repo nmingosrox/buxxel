@@ -1,12 +1,13 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, request, jsonify
 from buxxel.database import supabase   # adjust import if supabase client lives elsewhere
+from jinja2 import TemplateNotFound
 
 # Define the blueprint
 main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def index():
-    """Renders the home page by fetching listings from Supabase."""
+    """Renders the homepage"""
     per_page = 12
     try:
         print("Fetching first page of listings...")
@@ -22,3 +23,19 @@ def index():
     except Exception as e:
         print(f"❌ Error fetching listings: {e}")
         return render_template("index.html", listings=[], has_next=False, error="Could not connect to the database.")
+
+@main_bp.route("/browse")
+def browse():
+    try:
+        # TO DO
+        # Pagination setup
+        # filters (category, search term)
+        return render_template("browse.html")
+
+    except TemplateNotFound:
+        # If browse.html is missing, show a 404 page
+        return render_template("error_pages/e_404.html"), 404
+
+    except Exception as e:
+        # Catch unexpected errors gracefully
+        return render_template("error_pagese_500.html"), 500
