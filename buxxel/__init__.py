@@ -17,11 +17,11 @@ def create_app(config = DevelopmentConfig):
 
     # Check for essential configuration keys
     required_keys = [
-        'SUPABASE_URL',
-        'SUPABASE_SERVICE_KEY',
-        'SUPABASE_ANON_KEY',
-        'UPLOADCARE_PUBLIC_KEY',
-        'UPLOADCARE_SECRET_KEY',
+        'SB_URL',
+        'SB_SECRET_KEY',
+        'SB_PUBLISHABLE_KEY',
+        'UC_PUBLIC_KEY',
+        'UC_SECRET_KEY',
         'SECRET_KEY'
     ]
     missing = [k for k in required_keys if not app.config.get(k)]
@@ -42,9 +42,9 @@ def create_app(config = DevelopmentConfig):
     @app.context_processor
     def inject_global_vars():
         return dict(
-            uploadcare_public_key=app.config['UPLOADCARE_PUBLIC_KEY'],
-            supabase_url=app.config['SUPABASE_URL'],
-            supabase_key=app.config['SUPABASE_ANON_KEY']
+            uploadcare_public_key=app.config['UC_PUBLIC_KEY'],
+            supabase_url=app.config['SB_URL'],
+            supabase_key=app.config['SB_PUBLISHABLE_KEY']
         )
 
     return app

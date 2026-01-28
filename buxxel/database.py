@@ -1,13 +1,13 @@
 from supabase import create_client, Client
-#bconsider setting configuration settings here too
-# define configuration constraints in documentation
 from buxxel.config import Config
 
 # Standard client for user-specific operations (anon key)
-supabase: Client = create_client(Config.SUPABASE_URL, Config.SUPABASE_ANON_KEY)
+supabase: Client = create_client(Config.SB_URL,
+  Config.SB_PUBLISHABLE_KEY)
 
 # Privileged client for admin tasks (service key)
-supabase_admin: Client = create_client(Config.SUPABASE_URL, Config.SUPABASE_SERVICE_KEY)
+supabase_admin: Client = create_client(Config.SB_URL,
+  Config.SB_SECRET_KEY)
 
 # Utility function to create isolated clients (used in decorators for validation)
 def create_supabase_client(url: str, key: str) -> Client:

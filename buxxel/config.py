@@ -11,12 +11,12 @@ class Config:
     # Generate one with: python -c 'import secrets; print(secrets.token_hex(16))'
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
-    SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # For server-side admin access
-    SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")        # For client-side browser access
+    SB_URL = os.environ.get("SB_URL")
+    SB_PUBLISHABLE_KEY = os.environ.get("SB_PUBLISHABLE_KEY")  # For server side client browser access
+    SB_SECRET_KEY = os.environ.get("SB_SECRET_KEY") # For server side admin access
 
-    UPLOADCARE_PUBLIC_KEY = os.environ.get("UPLOADCARE_PUBLIC_KEY")
-    UPLOADCARE_SECRET_KEY = os.environ.get("UPLOADCARE_SECRET_KEY")
+    UC_PUBLIC_KEY = os.environ.get("UC_PUBLIC_KEY")
+    UC_SECRET_KEY = os.environ.get("UC_SECRET_KEY")
     
     # CUSTOM ENVIRONMENT VARIABLES
     COMMISSION_RATE = 0.10
