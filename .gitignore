@@ -17,3 +17,7 @@ venv/
 
 # Environment variables
 .env
+
+# Bash scripts
+scripts/
+*.sh
