@@ -1,5 +1,4 @@
-#nav-top-row.hidden {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
+body {
+    padding-top: 120px; / adjust for navbar height /
+    background-color: black;
 }
