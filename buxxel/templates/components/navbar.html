@@ -24,8 +24,35 @@
             <small class="text-warning">Post</small>
           </a>
         </li>
+        <li class="nav-item mx-3 text-center">
+          <a class="nav-link text-warning d-flex flex-column align-items-center" href="{{ url_for('listings_api.create_listing') }}">
+            <i class="bi bi-plus-circle-fill fs-4"></i>
+            <small class="text-warning">Register</small>
+          </a>
+        </li>
+        <li class="nav-item mx-3 text-center">
+          <a class="nav-link text-warning d-flex flex-column align-items-center" href="{{ url_for('listings_api.create_listing') }}">
+            <i class="bi bi-plus-circle-fill fs-4"></i>
+            <small class="text-warning">Login</small>
+          </a>
+        </li>
       </ul>
     </div>
+{% set modal_id = "loginModal" %}
+{% set label = "login" %}
+
+<!-- Trigger button -->
+{% include "components/modal_button.html" %}
+
+{% set id = "loginModal" %}
+{% set title = "login modal" %}
+{% set body = "<input type='email' name='email' class='form-control mb-2' placeholder='Email'>
+          <input type='password' name='password' class='form-control' placeholder='Password'>" %}
+{% set footer="<button type='submit' class='btn btn-warning'>Login</button>" %}
+
+
+<!-- Modal itself -->
+{% include "components/modal.html"%}
 
     <!-- Row 2: search bar -->
     <div class="w-100 mt-2">
