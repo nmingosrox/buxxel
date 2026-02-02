@@ -1,6 +1,6 @@
 # buxxel/__init__.py
 import os
-from flask import Flask
+from flask import Flask, render_template
 from buxxel.config import DevelopmentConfig, ProductionConfig
 from buxxel import database  # supabase clients live here
 from jinja2 import TemplateNotFound
