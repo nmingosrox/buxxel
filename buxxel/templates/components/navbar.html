@@ -1,3 +1,5 @@
+<!-- THIS IS THE NAVBAR CODE IT USES SOME COMPONENTS TOO -->
+
 <nav class="navbar navbar-dark bg-dark fixed-top w-100">
   <div class="container-fluid d-flex flex-column">
     <!-- Row 1: brand + nav links -->
@@ -38,20 +40,25 @@
         </li>
       </ul>
     </div>
-{% set modal_id = "loginModal" %}
-{% set label = "login" %}
 
-<!-- Trigger button -->
+<!-- login modal trigger button jinja parameters -->
+{% set label = "login" %}
+{% set modal_id = "loginModal" %}
+
+<!-- login modal trigger button jinja -->
 {% include "components/modal_button.html" %}
 
+<!-- login modal jinja parameters -->
+{% set modal_id = "loginModal" %}
 {% set id = "loginModal" %}
 {% set title = "login modal" %}
-{% set body = "<input type='email' name='email' class='form-control mb-2' placeholder='Email'>
-          <input type='password' name='password' class='form-control' placeholder='Password'>" %}
+{% set body = "
+  <input type='email' name='email' class='form-control mb-2' placeholder='Email'>
+  <input type='password' name='password' class='form-control' placeholder='Password'>" %}
 {% set footer="<button type='submit' class='btn btn-warning'>Login</button>" %}
 
 
-<!-- Modal itself -->
+<!-- login modal jinja -->
 {% include "components/modal.html"%}
 
     <!-- Row 2: search bar -->
