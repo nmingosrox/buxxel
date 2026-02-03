@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify
 from buxxel.database import supabase  # using the standard client
 import os
 
-api = Blueprint("api", __name__)
+auth = Blueprint("auth", __name__)
 
-@api.route("/api/login", methods=["POST"])
+@auth.route("/auth/login", methods=["POST"])
 def login():
     data = request.get_json() or {}
     email = data.get("email")
@@ -37,7 +37,7 @@ def login():
         return jsonify({"error": str(e)}), 500
 
 
-@api.route("/api/register", methods=["POST"])
+@auth.route("/auth/register", methods=["POST"])
 def register():
     data = request.get_json() or {}
     email = data.get("email")
