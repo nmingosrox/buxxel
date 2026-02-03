@@ -27,40 +27,27 @@
           </a>
         </li>
         <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-warning d-flex flex-column align-items-center" href="{{ url_for('listings_api.create_listing') }}">
-            <i class="bi bi-plus-circle-fill fs-4"></i>
-            <small class="text-warning">Register</small>
-          </a>
-        </li>
+  <!-- Trigger button -->
+  <a class="nav-link text-warning d-flex flex-column align-items-center" 
+     href="#" 
+     data-bs-toggle="modal" 
+     data-bs-target="#registerModal">
+    <i class="bi bi-person-plus-fill fs-4"></i>
+    <small class="text-warning">Register</small>
+  </a>
+</li>
         <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-warning d-flex flex-column align-items-center" href="{{ url_for('listings_api.create_listing') }}">
-            <i class="bi bi-plus-circle-fill fs-4"></i>
-            <small class="text-warning">Login</small>
-          </a>
+  <!-- Trigger button -->
+  <a class="nav-link text-warning d-flex flex-column align-items-center" 
+     href="#" 
+     data-bs-toggle="modal" 
+     data-bs-target="#loginModal">
+    <i class="bi bi-box-arrow-in-right fs-4"></i>
+    <small class="text-warning">Login</small>
+  </a>
         </li>
       </ul>
     </div>
-
-<!-- login modal trigger button jinja parameters -->
-{% set label = "login" %}
-    <!-- sets the id for the button and the modal -->
-{% set id = "loginModal" %}
-
-<!-- login modal trigger button jinja -->
-{% include "components/modal_button.html" %}
-
-<!-- login modal jinja parameters -->
-{% set modal_id = "loginModal" %}
-{% set title = "login modal" %}
-{% set body = "
-  <input type='email' name='email' class='form-control mb-2' placeholder='Email'>
-  <input type='password' name='password' class='form-control' placeholder='Password'>" %}
-{% set footer="<button type='submit' class='btn btn-warning'>Login</button>" %}
-
-
-<!-- login modal jinja -->
-{% include "components/modal.html"%}
-
     <!-- Row 2: search bar -->
     <div class="w-100 mt-2">
       <form class="d-flex" action="{{ url_for('main.browse') }}" method="get">
@@ -72,40 +59,45 @@
     </div>
   </div>
 </nav>
-<!-- ALERT: could cause precedence issues later
-     but this is the only way it seems to work -->
-<style>
-  body {
-    padding-top: 120px; / adjust for navbar height /
-  }
-</style>
 
-<!-- Inline jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(function() {
-    let lastScrollTop = 0;
-    const $navTopRow = $("#nav-top-row");
-    const threshold = 100; // pixels before triggering hide
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title text-warning" id="registerModalLabel">Register</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('auth.register') }}" method="post">
+        <div class="modal-body">
+          <input type="text" name="username" class="form-control mb-2" placeholder="Username" required>
+          <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+          <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
+          <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Register</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-    $(window).on("scroll", function() {
-      let scrollTop = $(this).scrollTop();
-
-      if (scrollTop > lastScrollTop && scrollTop > threshold) {
-        // scrolling down past threshold → animate hide
-        if ($navTopRow.is(":visible")) {
-          $navTopRow.slideUp(300, function() {
-            $navTopRow.addClass("d-none");
-          });
-        }
-      } else if (scrollTop < lastScrollTop) {
-        // scrolling up → animate show
-        if ($navTopRow.hasClass("d-none")) {
-          $navTopRow.removeClass("d-none").hide().slideDown(300);
-        }
-      }
-
-      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // avoid negative values
-    });
-  });
-</script>
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title text-warning" id="loginModalLabel">Login</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('auth.login') }}" method="post">
+        <div class="modal-body">
+          <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+          <input type="password" name="password" class="form-control" placeholder="Password" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
