@@ -1,6 +1,6 @@
 $(function() {
   let lastScrollTop = 0;
-  const $navbar = $(".navbar"); // animate the whole navbar
+  const $navbar = $(".navbar");
   const threshold = 50;
   let isHidden = false;
 
@@ -9,12 +9,12 @@ $(function() {
 
     if (scrollTop > lastScrollTop && scrollTop > threshold) {
       if (!isHidden) {
-        $navbar.stop(true, true).slideUp(300);
+        $navbar.addClass("hidden");
         isHidden = true;
       }
     } else if (scrollTop < lastScrollTop) {
       if (isHidden) {
-        $navbar.stop(true, true).slideDown(300);
+        $navbar.removeClass("hidden");
         isHidden = false;
       }
     }
