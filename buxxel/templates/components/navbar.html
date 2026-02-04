@@ -1,10 +1,15 @@
 <nav id="mainNavbar" class="navbar navbar-dark bg-dark fixed-top w-100">
   <div class="container-fluid d-flex flex-column">
-    <!-- Row 1: brand + nav links -->
-    <div id="nav-top-row" class="d-flex justify-content-between align-items-center w-100">
-      <a class="navbar-brand text-warning fw-bold" href="{{ url_for('main.index') }}">
+    
+    <!-- Row 1: brand centered -->
+    <div id="nav-brand-row" class="d-flex justify-content-center align-items-center w-100">
+      <a class="navbar-brand text-warning fw-bold fs-2" href="{{ url_for('main.index') }}">
         Buxxel
       </a>
+    </div>
+
+    <!-- Row 2: nav links centered -->
+    <div id="nav-links-row" class="d-flex justify-content-center align-items-center w-100 mt-2">
       <ul class="navbar-nav d-flex flex-row">
         <li class="nav-item mx-3 text-center">
           <a class="nav-link text-light d-flex flex-column align-items-center" href="{{ url_for('main.index') }}">
@@ -44,8 +49,9 @@
         </li>
       </ul>
     </div>
-    <!-- Row 2: search bar -->
-    <div class="w-100 mt-2">
+
+    <!-- Row 3: search bar centered -->
+    <div class="w-100 mt-2 d-flex justify-content-center">
       <form class="d-flex" action="{{ url_for('main.browse') }}" method="get">
         <input class="form-control me-2" type="search" name="q" placeholder="Search listings..." aria-label="Search">
         <button class="btn btn-warning" type="submit">
@@ -53,5 +59,6 @@
         </button>
       </form>
     </div>
+
   </div>
 </nav>
