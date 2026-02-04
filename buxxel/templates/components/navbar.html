@@ -1,13 +1,4 @@
 <!-- THIS IS THE NAVBAR CODE IT USES SOME COMPONENTS TOO -->
-<style>
-  .navbar {
-  transition: top 0.3s ease;
-}
-
-.navbar.hidden {
-  top: -120px; /* adjust this to match your navbar height */
-}
-</style>
 <nav class="navbar navbar-dark bg-dark fixed-top w-100">
   <div class="container-fluid d-flex flex-column">
     <!-- Row 1: brand + nav links -->
@@ -109,34 +100,3 @@
     </div>
   </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-3fpdpA4s46HoPazTA/gkGEXLMaLLq5yRvD/4CybXWfE="
-        crossorigin="anonymous"></script>
-<script>
-  $(function() {
-  let lastScrollTop = 0;
-  const $navbar = $(".navbar");
-  const threshold = 50; // don't hide until user scrolls past this
-  let isHidden = false;
-
-  $(window).on("scroll", function() {
-    let scrollTop = $(this).scrollTop();
-
-    if (scrollTop > lastScrollTop && scrollTop > threshold) {
-      // scrolling down
-      if (!isHidden) {
-        $navbar.addClass("hidden");
-        isHidden = true;
-      }
-    } else if (scrollTop < lastScrollTop) {
-      // scrolling up
-      if (isHidden) {
-        $navbar.removeClass("hidden");
-        isHidden = false;
-      }
-    }
-
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-  });
-});
-</script>
