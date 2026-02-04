@@ -1,7 +1,7 @@
 $(function() {
   let lastScrollTop = 0;
-  const $navbar = $(".navbar");
-  const threshold = 50;
+  const $navbar = $("#mainNavbar"); // target your specific navbar
+  const threshold = 50;             // optional scroll threshold
   let isHidden = false;
 
   $(window).on("scroll", function() {
@@ -9,12 +9,12 @@ $(function() {
 
     if (scrollTop > lastScrollTop && scrollTop > threshold) {
       if (!isHidden) {
-        $navbar.addClass("hidden");
+        $navbar.addClass("hidden"); // hide navbar
         isHidden = true;
       }
     } else if (scrollTop < lastScrollTop) {
       if (isHidden) {
-        $navbar.removeClass("hidden");
+        $navbar.removeClass("hidden"); // show navbar
         isHidden = false;
       }
     }
