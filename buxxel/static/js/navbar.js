@@ -1,16 +1,16 @@
-  let lastScrollTop = 0;
-  const navbar = document.getElementById("mainNavbar");
+let lastScrollTop = 0;
+const slidingContent = document.getElementById("nav-top-content");
 
-  window.addEventListener("scroll", function() {
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+window.addEventListener("scroll", function() {
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  let contentHeight = slidingContent.offsetHeight;
 
-    if (scrollTop > lastScrollTop) {
-      // Scrolling down → hide navbar
-      navbar.style.top = "-80px"; 
-    } else {
-      // Scrolling up → show navbar
-      navbar.style.top = "0";
-    }
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Avoid negative values
-  }, false);
-
+  if (scrollTop > lastScrollTop && scrollTop > 50) {
+    // Scrolling down → Slide the top rows up
+    slidingContent.style.marginTop = `-${contentHeight}px`; 
+  } else {
+    // Scrolling up → Slide them back down
+    slidingContent.style.marginTop = "0";
+  }
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+}, false);
