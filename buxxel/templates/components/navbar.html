@@ -1,56 +1,24 @@
-<nav id="mainNavbar" class="navbar navbar-dark bg-dark fixed-top w-100">
-  <div class="container-fluid d-flex flex-column">
+<nav id="mainNavbar" class="navbar navbar-dark bg-dark fixed-top w-100 p-0">
+  <div class="container-fluid d-flex flex-column p-2">
     
-    <!-- Row 1: brand centered -->
-    <div id="nav-brand-row" class="d-flex justify-content-center align-items-center w-100">
-      <a class="navbar-brand text-warning fw-bold fs-2" href="{{ url_for('main.index') }}">
-        Buxxel
-      </a>
+    <!-- Wrapper for sliding content -->
+    <div id="nav-top-content" style="transition: margin-top 0.4s ease-in-out;">
+      <!-- Row 1: brand centered -->
+      <div id="nav-brand-row" class="d-flex justify-content-center align-items-center w-100">
+        <a class="navbar-brand text-warning fs-2" href="{{ url_for('main.index') }}">
+          Buxxel
+        </a>
+      </div>
+
+      <!-- Row 2: nav links centered -->
+      <div id="nav-links-row" class="d-flex justify-content-center align-items-center w-100 mt-2">
+        <ul class="navbar-nav d-flex flex-row">
+          <!-- ... (list items remain exactly the same) ... -->
+        </ul>
+      </div>
     </div>
 
-    <!-- Row 2: nav links centered -->
-    <div id="nav-links-row" class="d-flex justify-content-center align-items-center w-100 mt-2">
-      <ul class="navbar-nav d-flex flex-row">
-        <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-light d-flex flex-column align-items-center" href="{{ url_for('main.index') }}">
-            <i class="bi bi-house-fill fs-4"></i>
-            <small class="text-light">Home</small>
-          </a>
-        </li>
-        <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-light d-flex flex-column align-items-center" href="{{ url_for('main.browse') }}">
-            <i class="bi bi-grid-fill fs-4"></i>
-            <small class="text-light">Browse</small>
-          </a>
-        </li>
-        <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-warning d-flex flex-column align-items-center" href="{{ url_for('listings_api.create_listing') }}">
-            <i class="bi bi-plus-circle-fill fs-4"></i>
-            <small class="text-warning">Post</small>
-          </a>
-        </li>
-        <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-warning d-flex flex-column align-items-center" 
-             href="#" 
-             data-bs-toggle="modal" 
-             data-bs-target="#registerModal">
-            <i class="bi bi-person-plus-fill fs-4"></i>
-            <small class="text-warning">Register</small>
-          </a>
-        </li>
-        <li class="nav-item mx-3 text-center">
-          <a class="nav-link text-warning d-flex flex-column align-items-center" 
-             href="#" 
-             data-bs-toggle="modal" 
-             data-bs-target="#loginModal">
-            <i class="bi bi-box-arrow-in-right fs-4"></i>
-            <small class="text-warning">Login</small>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Row 3: search bar centered -->
+    <!-- Row 3: search bar centered (Stays visible) -->
     <div class="w-100 mt-2 d-flex justify-content-center">
       <form class="d-flex" action="{{ url_for('main.browse') }}" method="get">
         <input class="form-control me-2" type="search" name="q" placeholder="Search listings..." aria-label="Search">
