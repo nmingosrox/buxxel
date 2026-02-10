@@ -37,34 +37,19 @@ def login():
         return jsonify({"error": str(e)}), 500
 
 
-@auth.route("/auth/register", methods=["POST"])
-def register():
-    data = request.get_json() or {}
+@auth.route("/auth/signup", methods=["POST"])
+def signup():
+    data = request.form
+
+    name = data.get('name')
+    phone = data.get('phone')
     email = data.get("email")
     password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"error": "Email and password required"}), 400
+    sburl = os.environ.get('SB_URL')
+    print(sburl)
+    response = supabase.auth.sign_up({
+      "email":email, "password":password
+      })
 
-    try:
-        # Supabase Auth sign-up
-        result = supabase.auth.sign_up({
-            "email": email,
-            "password": password
-        })
-
-        if result.user:
-            return jsonify({
-                "message": "Registration successful",
-                "user": {
-                    "id": result.user.id,
-                    "email": result.user.email
-                },
-                "access_token": result.session.access_token if result.session else None,
-                "refresh_token": result.session.refresh_token if result.session else None
-            }), 201
-        else:
-            return jsonify({"error": "Registration failed"}), 400
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify(response)

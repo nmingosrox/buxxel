@@ -13,7 +13,27 @@
       <!-- Row 2: nav links centered -->
       <div id="nav-links-row" class="d-flex justify-content-center align-items-center w-100 mt-2">
         <ul class="navbar-nav d-flex flex-row">
-          <!-- ... (list items remain exactly the same) ... -->
+         
+          <!-- Signup modal trigger -->
+          <li class="nav-item text-center px-3">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">
+             <i class="bi bi-person-plus px-1"><br></i>Signup
+            </a>
+          </li>
+
+          <!-- Login modal trigger -->
+          <li class="nav-item text-center px-3">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <i class="bi bi-box-arrow-in-right px-1"><br></i> Login
+            </a>
+          </li>
+
+          <!-- Browse page link -->
+          <li class="nav-item px-3 text-center">
+            <a class="nav-link" href="{{ url_for('main.browse') }}">
+	     <i class="bi bi-compass"><br></i>Browse
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -30,3 +50,90 @@
 
   </div>
 </nav>
+
+<!-- Signup Modal -->
+<div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="signupModalLabel">Signup</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <form action="{{ url_for('auth.signup') }}" method='POST'>
+          <!-- Basic Account Info -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input name="name" type="name" class="form-control" id="Name" placeholder="John Doe">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input name="email" type="email" class="form-control" id="email" placeholder="Enter email">
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Email address</label>
+            <input name="phone" type="phone" class="form-control" id="phone" placeholder="Enter cellphone number">
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+            <small>please set a strong password, money is involved in the this app</small>
+            <small id=passwordFeedback></small>
+
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Signup</button>
+        </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="loginEmail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="loginEmail" placeholder="Enter email">
+          </div>
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+            <script>
+              const form = document.getElementById("signupForm");
+              const passwordInput = document.getElementById("password");
+              const feedback = document.getElementById("passwordFeedback");
+
+              form.addEventListener("submit", function(event) {
+                const password = passwordInput.value;
+
+                if (password.length <= 6) {
+                  event.preventDefault(); // stop form submission
+                  feedback.textContent = "❌ Password must be longer than 6 characters.";
+                  feedback.style.color = "red";
+                } else {
+                 feedback.textContent = "✅ Password length is valid.";
+                 feedback.style.color = "green";
+                }
+              });
+            </script>
