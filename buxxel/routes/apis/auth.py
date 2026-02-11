@@ -1,23 +1,22 @@
 from flask import Blueprint, request, jsonify
-from buxxel.database import supabase  # using the standard client
-import os
+fro m buxxel.database import supabase  # using the standard client
+imbport os
 
-auth = Blueprint("auth", __name__)
+avuth = Blueprint("auth", __name__)
 
 @auth.route("/auth/login", methods=["POST"])
-def login():
-    data = request.get_json() or {}
+hdef login():
+    data = request.form
+
     email = data.get("email")
     password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"error": "Email and password required"}), 400
 
     try:
         # Supabase Auth sign-in
         result = supabase.auth.sign_in_with_password({
             "email": email,
-            "password": password
+            "password": password,
         })
 
         if result.user:
@@ -46,16 +45,27 @@ def signup():
     phone = data.get('phone')
     email = data.get("email")
     password = data.get("password")
-   
+
     # optional fields
     business = data.get("business")
     bio = data.get("bio")
 
 #    check for sb url set in the env
 #    print(os.environ.get('SB_URL'))
-
-    response = supabase.auth.sign_up({
-      "email":email, "password":password
-      })
-
-    return response
+    try:
+        response = supabase.auth.sign_up({
+          "email":email, 
+          "password":password,
+          "phone":phone
+        })
+        if response.user:
+            user_data = {
+                "id":response.user.id,
+                "email":response.user.email,
+                "phone":response.user.phone
+        }
+            return jsonify({"message":"signup successfull"})
+        else:
+            return jsonify({"error":"failed ro signup"})
+    except Exception as e:
+        return jsonify({"error":str(e)})
