@@ -40,16 +40,22 @@ def login():
 @auth.route("/auth/signup", methods=["POST"])
 def signup():
     data = request.form
-
+   
+    # required fields
     name = data.get('name')
     phone = data.get('phone')
     email = data.get("email")
     password = data.get("password")
+   
+    # optional fields
+    business = data.get("business")
+    bio = data.get("bio")
 
-    sburl = os.environ.get('SB_URL')
-    print(sburl)
+#    check for sb url set in the env
+#    print(os.environ.get('SB_URL'))
+
     response = supabase.auth.sign_up({
       "email":email, "password":password
       })
 
-    return jsonify(response)
+    return response

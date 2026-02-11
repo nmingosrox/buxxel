@@ -62,26 +62,33 @@
       </div>
       
       <div class="modal-body">
-        <form action="{{ url_for('auth.signup') }}" method='POST'>
+        <form id=""signupForm" action="{{ url_for('auth.signup') }}" method='POST'>
           <!-- Basic Account Info -->
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
-            <input name="name" type="name" class="form-control" id="Name" placeholder="John Doe">
+            <input name="name" type="name" class="form-control" id="Name" placeholder="John Doe" required>
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
-            <input name="email" type="email" class="form-control" id="email" placeholder="Enter email">
+            <input name="email" type="email" class="form-control" id="email" placeholder="Enter email" required>
           </div>
           <div class="mb-3">
-            <label for="phone" class="form-label">Email address</label>
-            <input name="phone" type="phone" class="form-control" id="phone" placeholder="Enter cellphone number">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input name="phone" type="phone" class="form-control" id="phone" placeholder="Enter cellphone number" required>
           </div>
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input name="password" type="password" class="form-control" id="password" placeholder="Password">
-            <small>please set a strong password, money is involved in the this app</small>
-            <small id=passwordFeedback></small>
-
+            <input name="password" type="password" class="form-control" id="password" placeholder="Password" minlength="6" required>
+            <small>please set a strong password, money is involved in the app</small>
+          </div>
+          <!-- optional fields -->
+          <div class="mb-3">
+            <label for="business" class="form-label">Business Name<small>(optiona)l</small></label>
+            <input name="business" type="text" class="form-control" id="text" placeholder="E.g. John Doe Motors">
+          </div>
+          <div class="mb-3">
+            <label for="bio" class="form-label">Bio<small>(optiona)l</small></label>
+            <textarea name="bio" class="form-control" placeholder="Tell us more about you and your business here..."></textarea>
           </div>
           <button type="submit" class="btn btn-primary w-100">Signup</button>
         </form>
@@ -117,23 +124,3 @@
     </div>
   </div>
 </div>
-
-
-            <script>
-              const form = document.getElementById("signupForm");
-              const passwordInput = document.getElementById("password");
-              const feedback = document.getElementById("passwordFeedback");
-
-              form.addEventListener("submit", function(event) {
-                const password = passwordInput.value;
-
-                if (password.length <= 6) {
-                  event.preventDefault(); // stop form submission
-                  feedback.textContent = "❌ Password must be longer than 6 characters.";
-                  feedback.style.color = "red";
-                } else {
-                 feedback.textContent = "✅ Password length is valid.";
-                 feedback.style.color = "green";
-                }
-              });
-            </script>
